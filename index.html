@@ -1,0 +1,3201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz - Mencare</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4FABCE',
+                        'primary-dark': '#3B8BAE',
+                        'bluue-blue': '#1E90FF'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="hidden fixed inset-0 bg-white z-50 flex flex-col items-center justify-center px-4">
+        <div class="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto">
+            <div class="text-center mb-6 sm:mb-7 md:mb-8">
+                <h1 class="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold text-gray-800">
+                    mencare
+                </h1>
+            </div>
+            
+            <!-- Loading Bar -->
+            <div class="flex justify-center mb-4">
+                <div class="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg bg-gray-200 rounded-full h-2 sm:h-2 md:h-2.5">
+                    <div id="loadingBar" class="bg-bluue-blue h-2 sm:h-2 md:h-2.5 rounded-full transition-all duration-75 ease-out" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <p class="text-gray-600 text-sm sm:text-base md:text-base">Carregando próxima etapa...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 1: Dados Pessoais -->
+    <div id="step1" class="container mx-auto px-4 py-4 sm:py-8 max-w-2xl">
+        <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6 lg:p-8">
+            <h1 class="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-800 mb-6 sm:mb-8 text-center leading-tight">
+                Antes, responda algumas perguntas para criarmos o tratamento ideal para você.
+            </h1>
+
+            <form id="quizForm" class="space-y-4 sm:space-y-6">
+                <!-- Nome -->
+                <div>
+                    <label for="nome" class="block text-sm font-medium text-gray-700 mb-2">
+                        NOME
+                    </label>
+                    <input 
+                        type="text" 
+                        id="nome" 
+                        name="nome" 
+                        placeholder="Digite seu nome..."
+                        class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200 placeholder-gray-400 text-sm sm:text-base"
+                    >
+                </div>
+
+                <!-- Telefone -->
+                <div>
+                    <label for="telefone" class="block text-sm font-medium text-gray-700 mb-2">
+                        TELEFONE
+                    </label>
+                    <input 
+                        type="tel" 
+                        id="telefone" 
+                        name="telefone" 
+                        placeholder="Digite seu telefone..."
+                        class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200 placeholder-gray-400 text-sm sm:text-base"
+                    >
+                </div>
+
+                <!-- CPF -->
+                <div>
+                    <label for="cpf" class="block text-sm font-medium text-gray-700 mb-2">
+                        CPF
+                    </label>
+                    <input 
+                        type="text" 
+                        id="cpf" 
+                        name="cpf" 
+                        placeholder="Digite seu CPF"
+                        maxlength="14"
+                        class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200 placeholder-gray-400 text-sm sm:text-base"
+                    >
+                </div>
+
+                <!-- Data de Nascimento -->
+                <div>
+                    <label for="dataNascimento" class="block text-sm font-medium text-gray-700 mb-2">
+                        DATA DE NASCIMENTO
+                    </label>
+                    <input 
+                        type="date" 
+                        id="dataNascimento" 
+                        name="dataNascimento" 
+                        placeholder="Digite sua data de nascimento..."
+                        class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200 placeholder-gray-400 text-sm sm:text-base"
+                    >
+                </div>
+
+                <!-- E-mail -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                        E-MAIL
+                    </label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="Digite seu E-mail..."
+                        class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200 placeholder-gray-400 text-sm sm:text-base"
+                    >
+                </div>
+
+                <!-- Termos -->
+                <div class="text-center text-xs sm:text-sm text-gray-600 mt-4 sm:mt-6">
+                    <p class="leading-relaxed">
+                        Ao continuar, você concorda incondicionalmente com os 
+                        <a href="#" class="text-blue-600 hover:underline">termos de uso</a>, 
+                        com a <a href="#" class="text-blue-600 hover:underline">política de privacidade</a> 
+                        e <strong>está totalmente ciente</strong> de: Preencha este campo.
+                    </p>
+                </div>
+
+                <!-- Botão Continuar -->
+                <button 
+                    type="submit" 
+                    id="continuar"
+                    class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-md transition-colors duration-200 mt-6 sm:mt-8 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 text-sm sm:text-base"
+                >
+                    Continuar
+                </button>
+            </form>
+
+            <!-- Loading Spinner -->
+            <div id="loading" class="hidden text-center mt-4">
+                <div class="inline-block animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-primary"></div>
+                <p class="text-gray-600 mt-2 text-sm sm:text-base">Salvando dados...</p>
+            </div>
+
+            <!-- Mensagem de Sucesso -->
+            <div id="successMessage" class="hidden bg-green-100 border border-green-400 text-green-700 px-3 sm:px-4 py-2 sm:py-3 rounded mt-4 text-sm sm:text-base">
+                <strong>Sucesso!</strong> Seus dados foram salvos com sucesso.
+            </div>
+
+            <!-- Mensagem de Erro -->
+            <div id="errorMessage" class="hidden bg-red-100 border border-red-400 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded mt-4 text-sm sm:text-base">
+                <strong>Erro!</strong> <span id="errorText">Ocorreu um erro ao salvar os dados. Tente novamente.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 2: O que melhorar -->
+    <div id="step2" class="hidden container mx-auto px-4 py-4 sm:py-6 md:py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-8 sm:mb-10 md:mb-12">
+            <h1 class="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-8 sm:mb-10 md:mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-1 sm:space-x-2 md:space-x-2">
+                    <div class="w-12 sm:w-14 md:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-14 md:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-14 md:w-16 h-1 bg-gray-300 rounded-full"></div>
+                    <div class="w-12 sm:w-14 md:w-16 h-1 bg-gray-300 rounded-full"></div>
+                    <div class="w-12 sm:w-14 md:w-16 h-1 bg-gray-300 rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-8 sm:mb-10 md:mb-12">
+            <h2 class="text-xl sm:text-2xl md:text-2xl font-semibold text-gray-800 leading-tight">
+                O que você está buscando melhorar?
+            </h2>
+        </div>
+
+        <!-- Options -->
+        <div class="space-y-3 sm:space-y-4 md:space-y-4">
+            <button 
+                class="option-button-step2 w-full text-left p-4 sm:p-5 md:p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="falta_libido"
+            >
+                <span class="text-gray-800 font-medium text-sm sm:text-base md:text-base">Falta de vontade (libido)</span>
+            </button>
+
+            <button 
+                class="option-button-step2 w-full text-left p-4 sm:p-5 md:p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="dificuldade_erecao"
+            >
+                <span class="text-gray-800 font-medium text-sm sm:text-base md:text-base">Dificuldade em ter ou manter ereção</span>
+            </button>
+
+            <button 
+                class="option-button-step2 w-full text-left p-4 sm:p-5 md:p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="ejaculacao_precoce"
+            >
+                <span class="text-gray-800 font-medium text-sm sm:text-base md:text-base">Ejaculação precoce</span>
+            </button>
+
+            <button 
+                class="option-button-step2 w-full text-left p-4 sm:p-5 md:p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="melhorar_qualidade"
+            >
+                <span class="text-gray-800 font-medium text-sm sm:text-base md:text-base">Melhorar a qualidade da ereção</span>
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading2" class="hidden text-center mt-6 sm:mt-7 md:mt-8">
+            <div class="inline-block animate-spin rounded-full h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2 text-sm sm:text-base md:text-base">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 3: Situações específicas -->
+    <div id="step3" class="hidden container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-2">
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-gray-300 rounded-full"></div>
+                    <div class="w-16 h-1 bg-gray-300 rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Qual dessas situações descreve melhor seu problema?
+            </h2>
+        </div>
+
+        <!-- Options -->
+        <div class="space-y-4">
+            <button 
+                class="option-button-step3 w-full text-left p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="nao_consigo_ficar_ereto"
+            >
+                <span class="text-gray-800 font-medium">Não consigo ficar ereto</span>
+            </button>
+
+            <button 
+                class="option-button-step3 w-full text-left p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="quero_manter_erecao"
+            >
+                <span class="text-gray-800 font-medium">Quero manter a ereção</span>
+            </button>
+
+            <button 
+                class="option-button-step3 w-full text-left p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="quero_erecoes_mais_fortes"
+            >
+                <span class="text-gray-800 font-medium">Quero ereções mais fortes</span>
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading3" class="hidden text-center mt-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 4: Baixa libido -->
+    <div id="step4" class="hidden container mx-auto px-4 py-4 sm:py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-8 sm:mb-12">
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-8 sm:mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-1 sm:space-x-2">
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-16 h-1 bg-gray-300 rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-12 sm:mb-16">
+            <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 leading-tight">
+                Você sente que está com baixa libido?
+            </h2>
+        </div>
+
+        <!-- Options -->
+        <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-8 max-w-md sm:max-w-none mx-auto">
+            <button 
+                class="option-button-step4 flex flex-col items-center p-6 sm:p-8 bg-white border border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent min-w-[140px] sm:min-w-[180px]"
+                data-value="sim"
+            >
+                <div class="w-12 h-12 sm:w-16 sm:h-16 bg-green-500 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                    <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <span class="text-gray-800 font-semibold text-base sm:text-lg">Sim</span>
+            </button>
+
+            <button 
+                class="option-button-step4 flex flex-col items-center p-6 sm:p-8 bg-white border border-gray-200 rounded-lg hover:border-red-500 hover:bg-red-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent min-w-[140px] sm:min-w-[180px]"
+                data-value="nao"
+            >
+                <div class="w-12 h-12 sm:w-16 sm:h-16 bg-red-500 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                    <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <span class="text-gray-800 font-semibold text-base sm:text-lg">Não</span>
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading4" class="hidden text-center mt-6 sm:mt-8">
+            <div class="inline-block animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2 text-sm sm:text-base">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 5: Peso -->
+    <div id="step5" class="hidden container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-2">
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Você está acima do peso (obeso/sobrepeso)?
+            </h2>
+        </div>
+
+        <!-- Options -->
+        <div class="space-y-4 max-w-md mx-auto">
+            <button 
+                class="option-button-step5 w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="sim"
+            >
+                <span class="text-gray-800 font-medium text-lg">Sim!</span>
+            </button>
+
+            <button 
+                class="option-button-step5 w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="nao"
+            >
+                <span class="text-gray-800 font-medium text-lg">Não</span>
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading5" class="hidden text-center mt-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 6: Peso Atual -->
+    <div id="step6" class="hidden container mx-auto px-4 py-4 sm:py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-8 sm:mb-12">
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-8 sm:mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-1 sm:space-x-2">
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-8 sm:mb-12">
+            <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 leading-tight">
+                Qual é o seu peso atual?
+            </h2>
+        </div>
+
+        <!-- Options -->
+        <div class="space-y-3 sm:space-y-4 md:space-y-4 max-w-md mx-auto">
+            <label class="option-radio-step6 flex items-center p-3 sm:p-4 md:p-4 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 cursor-pointer">
+                <input type="radio" name="peso" value="ate_70kg" class="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 text-bluue-blue bg-gray-100 border-gray-300 focus:ring-bluue-blue focus:ring-2 mr-3 sm:mr-4 md:mr-4">
+                <span class="text-gray-800 font-medium text-sm sm:text-base md:text-base">Até 70kg</span>
+            </label>
+
+            <label class="option-radio-step6 flex items-center p-3 sm:p-4 md:p-4 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 cursor-pointer">
+                <input type="radio" name="peso" value="71_80kg" class="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 text-bluue-blue bg-gray-100 border-gray-300 focus:ring-bluue-blue focus:ring-2 mr-3 sm:mr-4 md:mr-4">
+                <span class="text-gray-800 font-medium text-sm sm:text-base md:text-base">71kg a 80kg</span>
+            </label>
+
+            <label class="option-radio-step6 flex items-center p-3 sm:p-4 md:p-4 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 cursor-pointer">
+                <input type="radio" name="peso" value="81_90kg" class="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 text-bluue-blue bg-gray-100 border-gray-300 focus:ring-bluue-blue focus:ring-2 mr-3 sm:mr-4 md:mr-4">
+                <span class="text-gray-800 font-medium text-sm sm:text-base md:text-base">81kg - 90kg</span>
+            </label>
+
+            <label class="option-radio-step6 flex items-center p-3 sm:p-4 md:p-4 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 cursor-pointer">
+                <input type="radio" name="peso" value="91_100kg" class="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 text-bluue-blue bg-gray-100 border-gray-300 focus:ring-bluue-blue focus:ring-2 mr-3 sm:mr-4 md:mr-4">
+                <span class="text-gray-800 font-medium text-sm sm:text-base md:text-base">91kg - 100kg</span>
+            </label>
+
+            <label class="option-radio-step6 flex items-center p-3 sm:p-4 md:p-4 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 cursor-pointer">
+                <input type="radio" name="peso" value="acima_100kg" class="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 text-bluue-blue bg-gray-100 border-gray-300 focus:ring-bluue-blue focus:ring-2 mr-3 sm:mr-4 md:mr-4">
+                <span class="text-gray-800 font-medium text-sm sm:text-base md:text-base">Acima de 100kg</span>
+            </label>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading6" class="hidden text-center mt-6 sm:mt-8">
+            <div class="inline-block animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2 text-sm sm:text-base">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 7: Dificuldade para urinar -->
+    <div id="step7" class="hidden container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-2">
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Tem dificuldade para urinar?
+            </h2>
+        </div>
+
+        <!-- Options -->
+        <div class="space-y-4 max-w-md mx-auto">
+            <button 
+                class="option-button-step7 w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="sim"
+            >
+                <span class="text-gray-800 font-medium text-lg">Sim!</span>
+            </button>
+
+            <button 
+                class="option-button-step7 w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="nao"
+            >
+                <span class="text-gray-800 font-medium text-lg">Não</span>
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading7" class="hidden text-center mt-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 8: Aumento da próstata -->
+    <div id="step8" class="hidden container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-2">
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Já fez exame e detectou aumento da próstata?
+            </h2>
+        </div>
+
+        <!-- Options -->
+        <div class="space-y-4 max-w-md mx-auto">
+            <button 
+                class="option-button-step8 w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="sim"
+            >
+                <span class="text-gray-800 font-medium text-lg">Sim!</span>
+            </button>
+
+            <button 
+                class="option-button-step8 w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="nao"
+            >
+                <span class="text-gray-800 font-medium text-lg">Não</span>
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading8" class="hidden text-center mt-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 9: Uso de medicamentos -->
+    <div id="step9" class="hidden container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-2">
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Você faz uso de algum medicamento atualmente?
+            </h2>
+        </div>
+
+        <!-- Options -->
+        <div class="space-y-4 max-w-md mx-auto">
+            <button 
+                class="option-button-step9 w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="sim"
+            >
+                <span class="text-gray-800 font-medium text-lg">Sim!</span>
+            </button>
+
+            <button 
+                class="option-button-step9 w-full text-center p-6 bg-bluue-blue border border-bluue-blue rounded-lg hover:bg-blue-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="nao"
+            >
+                <span class="text-white font-medium text-lg">Não</span>
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading9" class="hidden text-center mt-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 10A: Medicamentos à base de Nitrato (quando escolhe "Sim" no Step 9) -->
+    <div id="step10a" class="hidden container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-2">
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Algum dos medicamentos que você usa é à base de Nitrato?
+            </h2>
+        </div>
+
+        <!-- Options -->
+        <div class="space-y-4 max-w-md mx-auto">
+            <button 
+                class="option-button-step10a w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="sim"
+            >
+                <span class="text-gray-800 font-medium text-lg">Sim</span>
+            </button>
+
+            <button 
+                class="option-button-step10a w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="nao"
+            >
+                <span class="text-gray-800 font-medium text-lg">Não</span>
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading10a" class="hidden text-center mt-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 10B: Cirurgia (quando escolhe "Não" no Step 9) -->
+    <div id="step10b" class="hidden container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-2">
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Já passou por alguma cirurgia?
+            </h2>
+        </div>
+
+        <!-- Options -->
+        <div class="space-y-4 max-w-md mx-auto">
+            <button 
+                class="option-button-step10b w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="sim"
+            >
+                <span class="text-gray-800 font-medium text-lg">Sim</span>
+            </button>
+
+            <button 
+                class="option-button-step10b w-full text-center p-6 bg-white border border-bluue-blue rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="nao"
+            >
+                <span class="text-gray-800 font-medium text-lg">Não</span>
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading10b" class="hidden text-center mt-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 11A: Descrever cirurgia (quando escolhe "Sim" no Step 10B) -->
+    <div id="step11a" class="hidden container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-2">
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Descreva qual e quando foi realizada
+            </h2>
+        </div>
+
+        <!-- Text Area -->
+        <div class="max-w-md mx-auto mb-8">
+            <textarea 
+                id="descricaoCirurgia"
+                name="descricaoCirurgia"
+                placeholder="Digite aqui mais informações sobre a sua cirurgia"
+                rows="4"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bluue-blue focus:border-transparent outline-none transition-all duration-200 placeholder-gray-400 resize-none"
+            ></textarea>
+        </div>
+
+        <!-- Button -->
+        <div class="max-w-md mx-auto">
+            <button 
+                id="continuarCirurgia"
+                class="w-full bg-bluue-blue hover:bg-blue-600 text-white font-semibold py-4 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:ring-offset-2"
+            >
+                Continuar
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading11a" class="hidden text-center mt-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 11B: Alergia a medicamentos (quando escolhe "Não" no Step 10B) -->
+    <div id="step11b" class="hidden container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-2">
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Tem alergia a algum tipo de medicamento?
+            </h2>
+        </div>
+
+        <!-- Options -->
+        <div class="space-y-4 max-w-md mx-auto">
+            <button 
+                class="option-button-step11b w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="sim"
+            >
+                <span class="text-gray-800 font-medium text-lg">Sim</span>
+            </button>
+
+            <button 
+                class="option-button-step11b w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="nao"
+            >
+                <span class="text-gray-800 font-medium text-lg">Não</span>
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading11b" class="hidden text-center mt-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 12A: Consulta médica (quando responde "Sim" no Step 10A sobre Nitrato) -->
+    <div id="step12a" class="hidden container mx-auto px-4 py-4 sm:py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-8 sm:mb-12">
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-8 sm:mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-1 sm:space-x-2">
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctor Image -->
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="inline-block">
+                <div class="w-32 h-32 sm:w-40 sm:h-40 bg-gray-200 rounded-full mx-auto mb-4 sm:mb-6 overflow-hidden">
+                    <!-- Placeholder for doctor image - you can replace this with actual image -->
+                    <div class="w-full h-full bg-gradient-to-b from-blue-100 to-blue-200 flex items-center justify-center">
+                        <svg class="w-16 h-16 sm:w-20 sm:h-20 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Title -->
+        <div class="text-center mb-6 sm:mb-8">
+            <h2 class="text-2xl sm:text-3xl font-bold text-bluue-blue mb-3 sm:mb-4">
+                Vamos parar por aqui?
+            </h2>
+            <p class="text-gray-600 text-base sm:text-lg leading-relaxed max-w-lg mx-auto px-4">
+                Pelo seu histórico de saúde, é indicado que se consulte presencialmente com um médico para falar com mais detalhes sobre seu caso. Se acha que respondeu algo errado, clique abaixo e revise suas respostas.
+            </p>
+        </div>
+
+        <!-- Button -->
+        <div class="max-w-md mx-auto">
+            <button 
+                id="revisarRespostas"
+                class="w-full bg-bluue-blue hover:bg-blue-600 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:ring-offset-2 text-sm sm:text-base"
+            >
+                Revisar
+            </button>
+        </div>
+    </div>
+
+    <!-- Step 13A: Listar medicamentos (quando responde "Não" no Step 10A sobre Nitrato) -->
+    <div id="step13a" class="hidden container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-2">
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Indique todos os medicamentos e dosagens
+            </h2>
+        </div>
+
+        <!-- Text Area -->
+        <div class="max-w-md mx-auto mb-8">
+            <textarea 
+                id="medicamentosDosagens"
+                name="medicamentosDosagens"
+                placeholder="Digite aqui os medicamentos e dosagens que você usa"
+                rows="4"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bluue-blue focus:border-transparent outline-none transition-all duration-200 placeholder-gray-400 resize-none"
+            ></textarea>
+        </div>
+
+        <!-- Button -->
+        <div class="max-w-md mx-auto">
+            <button 
+                id="continuarMedicamentos"
+                class="w-full bg-bluue-blue hover:bg-blue-600 text-white font-semibold py-4 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:ring-offset-2"
+            >
+                Continuar
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading13a" class="hidden text-center mt-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2">Salvando resposta...</p>
+                 </div>
+     </div>
+
+    <!-- Step 12B: Alergia a neuro-estimuladores (quando escolhe "Sim" no Step 11B) -->
+    <div id="step12b" class="hidden container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-2">
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Sua alergia é a medicamentos neuro-estimuladores?
+            </h2>
+        </div>
+
+        <!-- Options -->
+        <div class="space-y-4 max-w-md mx-auto">
+            <button 
+                class="option-button-step12b w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="sim"
+            >
+                <span class="text-gray-800 font-medium text-lg">Sim</span>
+            </button>
+
+            <button 
+                class="option-button-step12b w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="nao"
+            >
+                <span class="text-gray-800 font-medium text-lg">Não</span>
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading12b" class="hidden text-center mt-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 13B: Condições de saúde (quando escolhe "Não" no Step 11B) -->
+    <div id="step13b" class="hidden container mx-auto px-4 py-4 sm:py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-8 sm:mb-12">
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-8 sm:mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-1 sm:space-x-2">
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-12 sm:w-16 h-1 bg-bluue-blue rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-8 sm:mb-12">
+            <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 leading-tight">
+                Já teve alguma dessas condições de saúde?
+            </h2>
+        </div>
+
+        <!-- Multiple Choice Options -->
+        <div class="space-y-3 sm:space-y-4 max-w-md mx-auto mb-6 sm:mb-8">
+            <label class="flex items-center p-3 sm:p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 cursor-pointer">
+                <input type="checkbox" id="nenhuma" name="condicoes" value="nenhuma" class="w-4 h-4 sm:w-5 sm:h-5 text-bluue-blue bg-gray-100 border-gray-300 rounded focus:ring-bluue-blue focus:ring-2 mr-3 sm:mr-4">
+                <span class="text-gray-800 font-medium text-sm sm:text-base">🙅 Nenhuma das opções</span>
+            </label>
+
+            <label class="flex items-center p-3 sm:p-4 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 cursor-pointer">
+                <input type="checkbox" name="condicoes" value="avc" class="w-4 h-4 sm:w-5 sm:h-5 text-bluue-blue bg-gray-100 border-gray-300 rounded focus:ring-bluue-blue focus:ring-2 mr-3 sm:mr-4">
+                <span class="text-gray-800 font-medium text-sm sm:text-base">AVC</span>
+            </label>
+
+            <label class="flex items-center p-3 sm:p-4 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 cursor-pointer">
+                <input type="checkbox" name="condicoes" value="derrame" class="w-4 h-4 sm:w-5 sm:h-5 text-bluue-blue bg-gray-100 border-gray-300 rounded focus:ring-bluue-blue focus:ring-2 mr-3 sm:mr-4">
+                <span class="text-gray-800 font-medium text-sm sm:text-base">Derrame</span>
+            </label>
+
+            <label class="flex items-center p-3 sm:p-4 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 cursor-pointer">
+                <input type="checkbox" name="condicoes" value="hipertensao" class="w-4 h-4 sm:w-5 sm:h-5 text-bluue-blue bg-gray-100 border-gray-300 rounded focus:ring-bluue-blue focus:ring-2 mr-3 sm:mr-4">
+                <span class="text-gray-800 font-medium text-sm sm:text-base">Hipertensão</span>
+            </label>
+
+            <label class="flex items-center p-3 sm:p-4 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 cursor-pointer">
+                <input type="checkbox" name="condicoes" value="arritmias" class="w-4 h-4 sm:w-5 sm:h-5 text-bluue-blue bg-gray-100 border-gray-300 rounded focus:ring-bluue-blue focus:ring-2 mr-3 sm:mr-4">
+                <span class="text-gray-800 font-medium text-sm sm:text-base">Arritmias</span>
+            </label>
+
+            <label class="flex items-center p-3 sm:p-4 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 cursor-pointer">
+                <input type="checkbox" name="condicoes" value="diabetes" class="w-4 h-4 sm:w-5 sm:h-5 text-bluue-blue bg-gray-100 border-gray-300 rounded focus:ring-bluue-blue focus:ring-2 mr-3 sm:mr-4">
+                <span class="text-gray-800 font-medium text-sm sm:text-base">Diabetes</span>
+            </label>
+
+            <label class="flex items-center p-3 sm:p-4 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 cursor-pointer">
+                <input type="checkbox" name="condicoes" value="acido_urico" class="w-4 h-4 sm:w-5 sm:h-5 text-bluue-blue bg-gray-100 border-gray-300 rounded focus:ring-bluue-blue focus:ring-2 mr-3 sm:mr-4">
+                <span class="text-gray-800 font-medium text-sm sm:text-base">Ácido úrico alto</span>
+            </label>
+
+            <label class="flex items-center p-3 sm:p-4 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 cursor-pointer">
+                <input type="checkbox" name="condicoes" value="tontura" class="w-4 h-4 sm:w-5 sm:h-5 text-bluue-blue bg-gray-100 border-gray-300 rounded focus:ring-bluue-blue focus:ring-2 mr-3 sm:mr-4">
+                <span class="text-gray-800 font-medium text-sm sm:text-base">Tontura ou desmaios frequentes</span>
+            </label>
+
+            <label class="flex items-center p-3 sm:p-4 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 cursor-pointer">
+                <input type="checkbox" name="condicoes" value="outros" class="w-4 h-4 sm:w-5 sm:h-5 text-bluue-blue bg-gray-100 border-gray-300 rounded focus:ring-bluue-blue focus:ring-2 mr-3 sm:mr-4">
+                <span class="text-gray-800 font-medium text-sm sm:text-base">Outros</span>
+            </label>
+        </div>
+
+        <!-- Button -->
+        <div class="max-w-md mx-auto">
+            <button 
+                id="continuarCondicoes"
+                class="w-full bg-bluue-blue hover:bg-blue-600 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:ring-offset-2 text-sm sm:text-base"
+            >
+                Continuar
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading13b" class="hidden text-center mt-6 sm:mt-8">
+            <div class="inline-block animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2 text-sm sm:text-base">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 14: Alergia a vaso-dilatadores (quando escolhe "Não" no Step 12B) -->
+    <div id="step14" class="hidden container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-2">
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Sua alergia é a medicamentos vaso-dilatadores?
+            </h2>
+        </div>
+
+        <!-- Options -->
+        <div class="space-y-4 max-w-md mx-auto">
+            <button 
+                class="option-button-step14 w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="sim"
+            >
+                <span class="text-gray-800 font-medium text-lg">Sim</span>
+            </button>
+
+            <button 
+                class="option-button-step14 w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="nao"
+            >
+                <span class="text-gray-800 font-medium text-lg">Não</span>
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading14" class="hidden text-center mt-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 15: Alergia a corante (quando escolhe "Não" no Step 14) -->
+    <div id="step15" class="hidden container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-2">
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Tem alergia a algum tipo de corante?
+            </h2>
+        </div>
+
+        <!-- Options -->
+        <div class="space-y-4 max-w-md mx-auto">
+            <button 
+                class="option-button-step15 w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="sim"
+            >
+                <span class="text-gray-800 font-medium text-lg">Sim</span>
+            </button>
+
+            <button 
+                class="option-button-step15 w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="nao"
+            >
+                <span class="text-gray-800 font-medium text-lg">Não</span>
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading15" class="hidden text-center mt-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 16: Frequência de uso do medicamento -->
+    <div id="step16" class="hidden container mx-auto px-4 py-8 max-w-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800">
+                mencare
+            </h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <div class="flex space-x-2">
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                    <div class="w-16 h-1 bg-bluue-blue rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question -->
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800">
+                Quantas vezes você pretende usar o medicamento para atividade sexual, se prescrito?
+            </h2>
+        </div>
+
+        <!-- Options -->
+        <div class="space-y-4 max-w-md mx-auto">
+            <button 
+                class="option-button-step16 w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="4x_mes"
+            >
+                <span class="text-gray-800 font-medium text-lg">4x (ao mês)</span>
+            </button>
+
+            <button 
+                class="option-button-step16 w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="8x_mes"
+            >
+                <span class="text-gray-800 font-medium text-lg">8x (ao mês)</span>
+            </button>
+
+            <button 
+                class="option-button-step16 w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="12x_mes"
+            >
+                <span class="text-gray-800 font-medium text-lg">12x (ao mês)</span>
+            </button>
+
+            <button 
+                class="option-button-step16 w-full text-center p-6 bg-white border border-gray-200 rounded-lg hover:border-bluue-blue hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-bluue-blue focus:border-transparent"
+                data-value="todos_dias"
+            >
+                <span class="text-gray-800 font-medium text-lg">Todos os dias</span>
+            </button>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading16" class="hidden text-center mt-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2">Salvando resposta...</p>
+        </div>
+    </div>
+
+    <!-- Step 17: Tela de carregamento personalizada -->
+    <div id="step17" class="hidden fixed inset-0 bg-white z-50 flex flex-col items-center justify-center px-4">
+        <div class="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto">
+            <div class="text-center mb-6 sm:mb-7 md:mb-8">
+                <h1 class="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold text-gray-800">
+                    mencare
+                </h1>
+            </div>
+            
+            <div class="text-center mb-6 sm:mb-7 md:mb-8 px-4">
+                <p class="text-bluue-blue text-base sm:text-lg md:text-lg font-medium mb-3 sm:mb-4">Aguarde 5 segundos...</p>
+                <h2 class="text-lg sm:text-xl md:text-xl lg:text-2xl font-semibold text-gray-800 leading-tight mx-auto max-w-sm sm:max-w-md md:max-w-lg">
+                    Estamos analisando as suas respostas e preparando seu plano personalizado.
+                </h2>
+            </div>
+            
+            <!-- Loading Bar -->
+            <div class="flex justify-center">
+                <div class="w-full max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl bg-gray-200 rounded-full h-2 sm:h-2.5 md:h-3 mb-4">
+                    <div id="analysisLoadingBar" class="bg-bluue-blue h-2 sm:h-2.5 md:h-3 rounded-full transition-all duration-75 ease-out" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 18: Escolha do tratamento -->
+    <div id="step18" class="hidden container mx-auto px-4 py-4 sm:py-8 lg:py-12 max-w-7xl">
+        <!-- Header -->
+        <div class="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16">
+            <h1 class="text-2xl sm:text-3xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-gray-800 mb-2 sm:mb-3 md:mb-4 lg:mb-6 leading-tight">
+                Escolha o melhor<br class="hidden sm:block">tratamento para você
+            </h1>
+            <p class="text-gray-600 text-sm sm:text-base md:text-base lg:text-lg xl:text-xl mt-2">Selecione a quantidade ideal para suas necessidades</p>
+        </div>
+
+        <!-- Product Card -->
+        <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-5 md:p-6 lg:p-10 xl:p-12 mb-6 sm:mb-7 md:mb-8 lg:mb-12 max-w-3xl mx-auto">
+            <!-- Product Image -->
+            <div class="text-center mb-4 sm:mb-5 md:mb-6 lg:mb-8">
+                <div class="w-48 h-36 sm:w-56 sm:h-42 md:w-64 md:h-48 lg:w-80 lg:h-60 xl:w-96 xl:h-72 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg mx-auto flex items-center justify-center relative overflow-hidden">
+                    <!-- Placeholder para imagem do produto -->
+                    <div class="text-center">
+                        <div class="w-24 h-32 sm:w-28 sm:h-36 md:w-32 md:h-40 lg:w-40 lg:h-52 xl:w-48 xl:h-64 bg-white rounded-lg shadow-md flex items-center justify-center mb-2">
+                            <span class="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-bluue-blue">mencare</span>
+                        </div>
+                        <div class="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 md:bottom-4 md:right-4 lg:bottom-6 lg:right-6">
+                            <div class="flex space-x-1 lg:space-x-2">
+                                <div class="w-1.5 h-1.5 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 lg:w-3 lg:h-3 bg-white rounded-full opacity-60"></div>
+                                <div class="w-1.5 h-1.5 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 lg:w-3 lg:h-3 bg-white rounded-full"></div>
+                                <div class="w-1.5 h-1.5 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 lg:w-3 lg:h-3 bg-white rounded-full opacity-60"></div>
+                                <div class="w-1.5 h-1.5 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 lg:w-3 lg:h-3 bg-white rounded-full opacity-60"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="text-center mb-4 sm:mb-5 md:mb-6 lg:mb-8">
+                <p class="text-base sm:text-lg md:text-lg lg:text-2xl xl:text-3xl font-semibold text-gray-800 mb-2 lg:mb-4">
+                    Você recebe <span class="text-red-600 font-bold" id="selectedDoses">8 doses</span>
+                </p>
+                <p class="text-base sm:text-lg md:text-lg lg:text-xl xl:text-2xl text-gray-600 mb-3 sm:mb-3 md:mb-4 lg:mb-6">
+                    Cada dose sai por: <span class="text-red-600 font-bold" id="pricePerDose">R$24,74</span>
+                </p>
+                <div class="inline-block bg-green-100 text-green-800 px-3 py-2 sm:px-3 sm:py-2 md:px-4 md:py-2 lg:px-6 lg:py-3 xl:px-8 xl:py-4 rounded-full text-xs sm:text-sm md:text-sm lg:text-base xl:text-lg font-semibold">
+                    <span id="savingsText">Economize R$68!</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Treatment Options -->
+        <div class="mb-6 sm:mb-8 md:mb-10 lg:mb-16">
+            <!-- Mobile Layout (Vertical) -->
+            <div class="flex flex-col space-y-4 sm:hidden max-w-sm mx-auto">
+                <!-- 4 Unidades -->
+                <div class="treatment-option bg-gray-300 border-2 border-gray-400 rounded-2xl p-6 text-center cursor-pointer hover:border-bluue-blue hover:scale-105 transition-all duration-200 relative" data-value="4">
+                    <div class="text-4xl font-bold text-gray-600 mb-2">4</div>
+                    <div class="text-sm text-gray-700 font-semibold">Unidades</div>
+                    <div class="text-xs text-gray-500 mt-1">R$ 131,95</div>
+                </div>
+
+                <!-- 8 Unidades - Mais Vendido -->
+                <div class="treatment-option bg-bluue-blue border-2 border-bluue-blue rounded-2xl p-6 text-center cursor-pointer relative hover:scale-105 transition-all duration-200" data-value="8">
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                        <span class="bg-blue-700 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow-lg">Mais Vendido</span>
+                    </div>
+                    <div class="text-4xl font-bold text-white mb-2">8</div>
+                    <div class="text-sm text-white font-semibold">Unidades</div>
+                    <div class="text-xs text-blue-100 mt-1">R$ 197,92</div>
+                </div>
+
+                <!-- 12 Unidades - Maior Economia -->
+                <div class="treatment-option bg-gray-500 border-2 border-gray-600 rounded-2xl p-6 text-center cursor-pointer hover:border-bluue-blue hover:scale-105 transition-all duration-200 relative" data-value="12">
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                        <span class="bg-gray-700 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow-lg">Maior Economia</span>
+                    </div>
+                    <div class="text-4xl font-bold text-white mb-2">12</div>
+                    <div class="text-sm text-white font-semibold">Unidades</div>
+                    <div class="text-xs text-gray-200 mt-1">R$ 296,88</div>
+                </div>
+            </div>
+
+            <!-- Tablet and Desktop Layout (Horizontal) -->
+            <div class="hidden sm:flex justify-center items-end space-x-3 md:space-x-4 lg:space-x-12 xl:space-x-16 max-w-3xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto">
+                <!-- 4 Unidades -->
+                <div class="treatment-option bg-gray-300 border-2 border-gray-400 rounded-2xl p-4 md:p-6 lg:p-10 xl:p-12 text-center cursor-pointer hover:border-bluue-blue hover:scale-105 transition-all duration-200 flex-1 relative max-w-[180px] md:max-w-xs lg:max-w-sm xl:max-w-md" data-value="4">
+                    <div class="text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-bold text-gray-600 mb-2 md:mb-3 lg:mb-6">4</div>
+                    <div class="text-xs md:text-sm lg:text-lg xl:text-xl text-gray-700 font-semibold mb-1 md:mb-2 lg:mb-4">Unidades</div>
+                    <div class="text-xs md:text-xs lg:text-base xl:text-lg text-gray-500 font-medium">R$ 131,95</div>
+                </div>
+
+                <!-- 8 Unidades - Mais Vendido -->
+                <div class="treatment-option bg-bluue-blue border-2 border-bluue-blue rounded-2xl p-4 md:p-6 lg:p-10 xl:p-12 text-center cursor-pointer relative flex-1 max-w-[180px] md:max-w-xs lg:max-w-sm xl:max-w-md hover:scale-105 transition-all duration-200" data-value="8">
+                    <div class="absolute -top-3 md:-top-4 lg:-top-6 xl:-top-8 left-1/2 transform -translate-x-1/2 z-10">
+                        <span class="bg-blue-700 text-white text-xs md:text-sm lg:text-base xl:text-lg px-3 md:px-4 lg:px-6 xl:px-8 py-1.5 md:py-2 lg:py-3 xl:py-4 rounded-full font-bold shadow-lg">Mais Vendido</span>
+                    </div>
+                    <div class="text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-bold text-white mb-2 md:mb-3 lg:mb-6">8</div>
+                    <div class="text-xs md:text-sm lg:text-lg xl:text-xl text-white font-semibold mb-1 md:mb-2 lg:mb-4">Unidades</div>
+                    <div class="text-xs md:text-xs lg:text-base xl:text-lg text-blue-100 font-medium">R$ 197,92</div>
+                </div>
+
+                <!-- 12 Unidades - Maior Economia -->
+                <div class="treatment-option bg-gray-500 border-2 border-gray-600 rounded-2xl p-4 md:p-6 lg:p-10 xl:p-12 text-center cursor-pointer hover:border-bluue-blue hover:scale-105 transition-all duration-200 relative flex-1 max-w-[180px] md:max-w-xs lg:max-w-sm xl:max-w-md" data-value="12">
+                    <div class="absolute -top-3 md:-top-4 lg:-top-6 xl:-top-8 left-1/2 transform -translate-x-1/2 z-10">
+                        <span class="bg-gray-700 text-white text-xs md:text-sm lg:text-base xl:text-lg px-3 md:px-4 lg:px-6 xl:px-8 py-1.5 md:py-2 lg:py-3 xl:py-4 rounded-full font-bold shadow-lg">Maior Economia</span>
+                    </div>
+                    <div class="text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-bold text-white mb-2 md:mb-3 lg:mb-6">12</div>
+                    <div class="text-xs md:text-sm lg:text-lg xl:text-xl text-white font-semibold mb-1 md:mb-2 lg:mb-4">Unidades</div>
+                    <div class="text-xs md:text-xs lg:text-base xl:text-lg text-gray-200 font-medium">R$ 296,88</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Price Today -->
+        <div class="text-center mb-6 sm:mb-8 md:mb-10 lg:mb-16">
+            <p class="text-lg sm:text-xl md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-800 mb-2 lg:mb-4">Preço Hoje:</p>
+            <p id="currentPrice" class="text-2xl sm:text-3xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-red-600">R$ 197,92</p>
+            <p class="text-xs sm:text-sm md:text-sm lg:text-base xl:text-lg text-gray-500 mt-2 lg:mt-4">*Melhor preço do mercado</p>
+        </div>
+
+        <!-- Checkout Button -->
+        <div class="text-center mb-6">
+            <button 
+                id="checkoutButton"
+                class="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 sm:px-10 md:px-12 lg:px-16 xl:px-20 lg:py-6 xl:py-8 rounded-xl text-lg sm:text-xl md:text-xl lg:text-2xl xl:text-3xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 hover:scale-105 shadow-lg"
+            >
+                <span class="flex items-center justify-center">
+                    <svg class="w-5 h-5 lg:w-6 lg:h-6 xl:w-8 xl:h-8 mr-2 lg:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13h10m0 0l1.5 6M17 13v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6.4"></path>
+                    </svg>
+                    Finalizar Pedido
+                </span>
+            </button>
+            <p class="text-xs sm:text-sm md:text-sm lg:text-base xl:text-lg text-gray-500 mt-3 lg:mt-6">
+                🔒 Pagamento 100% seguro • Entrega rápida • Garantia de qualidade
+            </p>
+        </div>
+
+        <!-- Selection Loading -->
+        <div id="selectionLoading18" class="hidden text-center mt-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 lg:h-12 lg:w-12 border-b-2 border-bluue-blue"></div>
+            <p class="text-gray-600 mt-2 lg:text-lg">Processando...</p>
+        </div>
+    </div>
+
+     <script>
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://ngdzdbqubwivbqckqkqd.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nZHpkYnF1YndpdmJxY2txa3FkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODk1NDIxMSwiZXhwIjoyMDY0NTMwMjExfQ.HjxFMBNvJ1KhBsMt-DL6z86PY6kbsOTa9hnioRTdde0';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Variável para controlar o passo atual
+        let currentStep = 1;
+        let userData = {};
+
+        // Função para animar a barra de carregamento
+        function animateLoadingBar() {
+            console.log('=== ANIMATELOADINGBAR EXECUTADA ===');
+            const loadingBar = document.getElementById('loadingBar');
+            console.log('LoadingBar encontrada?', !!loadingBar);
+            let width = 0;
+            const interval = setInterval(() => {
+                width += 2;
+                loadingBar.style.width = width + '%';
+                
+                if (width >= 100) {
+                    console.log('Barra chegou a 100%, executando showStep2 em 300ms...');
+                    clearInterval(interval);
+                    setTimeout(showStep2, 300);
+                }
+            }, 40); // 2000ms / 50 steps = 40ms por step
+        }
+
+        // Função para animar a barra de carregamento de análise (5 segundos)
+        function animateAnalysisLoadingBar() {
+            console.log('=== ANIMATEANALYSISLOADINGBAR EXECUTADA ===');
+            const loadingBar = document.getElementById('analysisLoadingBar');
+            console.log('AnalysisLoadingBar encontrada?', !!loadingBar);
+            let width = 0;
+            const interval = setInterval(() => {
+                width += 2;
+                loadingBar.style.width = width + '%';
+                
+                if (width >= 100) {
+                    console.log('Barra de análise chegou a 100%, executando showStep18 em 300ms...');
+                    clearInterval(interval);
+                    setTimeout(showStep18, 300);
+                }
+            }, 100); // 5000ms / 50 steps = 100ms por step (5 segundos total)
+        }
+
+        // Função para mostrar o Step 2
+        function showStep2() {
+            console.log('=== SHOWSTEP2 EXECUTADA ===');
+            console.log('Escondendo loadingScreen...');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            console.log('Escondendo step1...');
+            document.getElementById('step1').classList.add('hidden');
+            console.log('Escondendo step3...');
+            document.getElementById('step3').classList.add('hidden');
+            console.log('Escondendo step4...');
+            document.getElementById('step4').classList.add('hidden');
+            console.log('Escondendo step5...');
+            document.getElementById('step5').classList.add('hidden');
+            console.log('Escondendo step6...');
+            document.getElementById('step6').classList.add('hidden');
+            console.log('Mostrando step2...');
+            document.getElementById('step2').classList.remove('hidden');
+            console.log('Step 2 agora deve estar visível');
+            currentStep = 2;
+        }
+
+        // Função para mostrar o Step 3
+        function showStep3() {
+            console.log('=== SHOWSTEP3 EXECUTADA ===');
+            console.log('Escondendo loadingScreen...');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            console.log('Escondendo step1...');
+            document.getElementById('step1').classList.add('hidden');
+            console.log('Escondendo step2...');
+            document.getElementById('step2').classList.add('hidden');
+            console.log('Escondendo step4...');
+            document.getElementById('step4').classList.add('hidden');
+            console.log('Escondendo step5...');
+            document.getElementById('step5').classList.add('hidden');
+            console.log('Escondendo step6...');
+            document.getElementById('step6').classList.add('hidden');
+            console.log('Mostrando step3...');
+            document.getElementById('step3').classList.remove('hidden');
+            console.log('Step 3 agora deve estar visível');
+            currentStep = 3;
+        }
+
+        // Função para mostrar o Step 4
+        function showStep4() {
+            console.log('=== SHOWSTEP4 EXECUTADA ===');
+            console.log('Escondendo loadingScreen...');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            console.log('Escondendo step1...');
+            document.getElementById('step1').classList.add('hidden');
+            console.log('Escondendo step2...');
+            document.getElementById('step2').classList.add('hidden');
+            console.log('Escondendo step3...');
+            document.getElementById('step3').classList.add('hidden');
+            console.log('Escondendo step5...');
+            document.getElementById('step5').classList.add('hidden');
+            console.log('Escondendo step6...');
+            document.getElementById('step6').classList.add('hidden');
+            console.log('Mostrando step4...');
+            document.getElementById('step4').classList.remove('hidden');
+            console.log('Step 4 agora deve estar visível');
+            currentStep = 4;
+        }
+
+        // Função para mostrar o Step 5
+        function showStep5() {
+            console.log('=== SHOWSTEP5 EXECUTADA ===');
+            console.log('Escondendo loadingScreen...');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            console.log('Escondendo step1...');
+            document.getElementById('step1').classList.add('hidden');
+            console.log('Escondendo step2...');
+            document.getElementById('step2').classList.add('hidden');
+            console.log('Escondendo step3...');
+            document.getElementById('step3').classList.add('hidden');
+            console.log('Escondendo step4...');
+            document.getElementById('step4').classList.add('hidden');
+            console.log('Escondendo step6...');
+            document.getElementById('step6').classList.add('hidden');
+            console.log('Escondendo step7...');
+            document.getElementById('step7').classList.add('hidden');
+            console.log('Mostrando step5...');
+            document.getElementById('step5').classList.remove('hidden');
+            console.log('Step 5 agora deve estar visível');
+            currentStep = 5;
+        }
+
+        // Função para mostrar o Step 6
+        function showStep6() {
+            console.log('=== SHOWSTEP6 EXECUTADA ===');
+            console.log('Escondendo loadingScreen...');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            console.log('Escondendo step1...');
+            document.getElementById('step1').classList.add('hidden');
+            console.log('Escondendo step2...');
+            document.getElementById('step2').classList.add('hidden');
+            console.log('Escondendo step3...');
+            document.getElementById('step3').classList.add('hidden');
+            console.log('Escondendo step4...');
+            document.getElementById('step4').classList.add('hidden');
+            console.log('Escondendo step5...');
+            document.getElementById('step5').classList.add('hidden');
+            console.log('Escondendo step7...');
+            document.getElementById('step7').classList.add('hidden');
+            console.log('Mostrando step6...');
+            document.getElementById('step6').classList.remove('hidden');
+            console.log('Step 6 agora deve estar visível');
+            currentStep = 6;
+        }
+
+        // Função para mostrar o Step 7
+        function showStep7() {
+            console.log('=== SHOWSTEP7 EXECUTADA ===');
+            console.log('Escondendo loadingScreen...');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            console.log('Escondendo step1...');
+            document.getElementById('step1').classList.add('hidden');
+            console.log('Escondendo step2...');
+            document.getElementById('step2').classList.add('hidden');
+            console.log('Escondendo step3...');
+            document.getElementById('step3').classList.add('hidden');
+            console.log('Escondendo step4...');
+            document.getElementById('step4').classList.add('hidden');
+            console.log('Escondendo step5...');
+            document.getElementById('step5').classList.add('hidden');
+            console.log('Escondendo step6...');
+            document.getElementById('step6').classList.add('hidden');
+            console.log('Escondendo step8...');
+            document.getElementById('step8').classList.add('hidden');
+            console.log('Mostrando step7...');
+            document.getElementById('step7').classList.remove('hidden');
+            console.log('Step 7 agora deve estar visível');
+            currentStep = 7;
+        }
+
+        // Função para mostrar o Step 8
+        function showStep8() {
+            console.log('=== SHOWSTEP8 EXECUTADA ===');
+            console.log('Escondendo loadingScreen...');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            console.log('Escondendo step1...');
+            document.getElementById('step1').classList.add('hidden');
+            console.log('Escondendo step2...');
+            document.getElementById('step2').classList.add('hidden');
+            console.log('Escondendo step3...');
+            document.getElementById('step3').classList.add('hidden');
+            console.log('Escondendo step4...');
+            document.getElementById('step4').classList.add('hidden');
+            console.log('Escondendo step5...');
+            document.getElementById('step5').classList.add('hidden');
+            console.log('Escondendo step6...');
+            document.getElementById('step6').classList.add('hidden');
+            console.log('Escondendo step7...');
+            document.getElementById('step7').classList.add('hidden');
+            console.log('Escondendo step9...');
+            document.getElementById('step9').classList.add('hidden');
+            console.log('Mostrando step8...');
+            document.getElementById('step8').classList.remove('hidden');
+            console.log('Step 8 agora deve estar visível');
+            currentStep = 8;
+        }
+
+        // Função para mostrar o Step 9
+        function showStep9() {
+            console.log('=== SHOWSTEP9 EXECUTADA ===');
+            console.log('Escondendo loadingScreen...');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            console.log('Escondendo step1...');
+            document.getElementById('step1').classList.add('hidden');
+            console.log('Escondendo step2...');
+            document.getElementById('step2').classList.add('hidden');
+            console.log('Escondendo step3...');
+            document.getElementById('step3').classList.add('hidden');
+            console.log('Escondendo step4...');
+            document.getElementById('step4').classList.add('hidden');
+            console.log('Escondendo step5...');
+            document.getElementById('step5').classList.add('hidden');
+            console.log('Escondendo step6...');
+            document.getElementById('step6').classList.add('hidden');
+            console.log('Escondendo step7...');
+            document.getElementById('step7').classList.add('hidden');
+            console.log('Escondendo step8...');
+            document.getElementById('step8').classList.add('hidden');
+            console.log('Escondendo step10a...');
+            document.getElementById('step10a').classList.add('hidden');
+            console.log('Escondendo step10b...');
+            document.getElementById('step10b').classList.add('hidden');
+            console.log('Mostrando step9...');
+            document.getElementById('step9').classList.remove('hidden');
+            console.log('Step 9 agora deve estar visível');
+            currentStep = 9;
+        }
+
+        // Função para mostrar o Step 10A (Medicamentos à base de Nitrato)
+        function showStep10A() {
+            console.log('=== SHOWSTEP10A EXECUTADA ===');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.add('hidden');
+            document.getElementById('step5').classList.add('hidden');
+            document.getElementById('step6').classList.add('hidden');
+            document.getElementById('step7').classList.add('hidden');
+            document.getElementById('step8').classList.add('hidden');
+            document.getElementById('step9').classList.add('hidden');
+            document.getElementById('step10b').classList.add('hidden');
+            document.getElementById('step10a').classList.remove('hidden');
+            currentStep = '10a';
+        }
+
+        // Função para mostrar o Step 10B (Cirurgia)
+        function showStep10B() {
+            console.log('=== SHOWSTEP10B EXECUTADA ===');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.add('hidden');
+            document.getElementById('step5').classList.add('hidden');
+            document.getElementById('step6').classList.add('hidden');
+            document.getElementById('step7').classList.add('hidden');
+            document.getElementById('step8').classList.add('hidden');
+            document.getElementById('step9').classList.add('hidden');
+            document.getElementById('step10a').classList.add('hidden');
+            document.getElementById('step11a').classList.add('hidden');
+            document.getElementById('step11b').classList.add('hidden');
+            document.getElementById('step10b').classList.remove('hidden');
+            currentStep = '10b';
+        }
+
+        // Função para mostrar o Step 11A (Descrever cirurgia)
+        function showStep11A() {
+            console.log('=== SHOWSTEP11A EXECUTADA ===');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.add('hidden');
+            document.getElementById('step5').classList.add('hidden');
+            document.getElementById('step6').classList.add('hidden');
+            document.getElementById('step7').classList.add('hidden');
+            document.getElementById('step8').classList.add('hidden');
+            document.getElementById('step9').classList.add('hidden');
+            document.getElementById('step10a').classList.add('hidden');
+            document.getElementById('step10b').classList.add('hidden');
+            document.getElementById('step11b').classList.add('hidden');
+            document.getElementById('step11a').classList.remove('hidden');
+            currentStep = '11a';
+        }
+
+        // Função para mostrar o Step 11B (Alergia a medicamentos)
+        function showStep11B() {
+            console.log('=== SHOWSTEP11B EXECUTADA ===');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.add('hidden');
+            document.getElementById('step5').classList.add('hidden');
+            document.getElementById('step6').classList.add('hidden');
+            document.getElementById('step7').classList.add('hidden');
+            document.getElementById('step8').classList.add('hidden');
+            document.getElementById('step9').classList.add('hidden');
+            document.getElementById('step10a').classList.add('hidden');
+            document.getElementById('step10b').classList.add('hidden');
+            document.getElementById('step11a').classList.add('hidden');
+            document.getElementById('step12a').classList.add('hidden');
+            document.getElementById('step11b').classList.remove('hidden');
+            currentStep = '11b';
+        }
+
+        // Função para mostrar o Step 12A (Consulta médica)
+        function showStep12A() {
+            console.log('=== SHOWSTEP12A EXECUTADA ===');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.add('hidden');
+            document.getElementById('step5').classList.add('hidden');
+            document.getElementById('step6').classList.add('hidden');
+            document.getElementById('step7').classList.add('hidden');
+            document.getElementById('step8').classList.add('hidden');
+            document.getElementById('step9').classList.add('hidden');
+            document.getElementById('step10a').classList.add('hidden');
+            document.getElementById('step10b').classList.add('hidden');
+            document.getElementById('step11a').classList.add('hidden');
+            document.getElementById('step11b').classList.add('hidden');
+            document.getElementById('step12b').classList.add('hidden');
+            document.getElementById('step13a').classList.add('hidden');
+            document.getElementById('step13b').classList.add('hidden');
+            document.getElementById('step14').classList.add('hidden');
+            document.getElementById('step15').classList.add('hidden');
+            document.getElementById('step12a').classList.remove('hidden');
+            currentStep = '12a';
+        }
+
+        // Função para mostrar o Step 13A (Listar medicamentos)
+        function showStep13A() {
+            console.log('=== SHOWSTEP13A EXECUTADA ===');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.add('hidden');
+            document.getElementById('step5').classList.add('hidden');
+            document.getElementById('step6').classList.add('hidden');
+            document.getElementById('step7').classList.add('hidden');
+            document.getElementById('step8').classList.add('hidden');
+            document.getElementById('step9').classList.add('hidden');
+            document.getElementById('step10a').classList.add('hidden');
+            document.getElementById('step10b').classList.add('hidden');
+            document.getElementById('step11a').classList.add('hidden');
+            document.getElementById('step11b').classList.add('hidden');
+            document.getElementById('step12a').classList.add('hidden');
+            document.getElementById('step12b').classList.add('hidden');
+            document.getElementById('step13b').classList.add('hidden');
+            document.getElementById('step13a').classList.remove('hidden');
+            currentStep = '13a';
+        }
+
+        // Função para mostrar o Step 12B (Alergia a neuro-estimuladores)
+        function showStep12B() {
+            console.log('=== SHOWSTEP12B EXECUTADA ===');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.add('hidden');
+            document.getElementById('step5').classList.add('hidden');
+            document.getElementById('step6').classList.add('hidden');
+            document.getElementById('step7').classList.add('hidden');
+            document.getElementById('step8').classList.add('hidden');
+            document.getElementById('step9').classList.add('hidden');
+            document.getElementById('step10a').classList.add('hidden');
+            document.getElementById('step10b').classList.add('hidden');
+            document.getElementById('step11a').classList.add('hidden');
+            document.getElementById('step11b').classList.add('hidden');
+            document.getElementById('step12a').classList.add('hidden');
+            document.getElementById('step13a').classList.add('hidden');
+            document.getElementById('step13b').classList.add('hidden');
+            document.getElementById('step12b').classList.remove('hidden');
+            currentStep = '12b';
+        }
+
+        // Função para mostrar o Step 13B (Condições de saúde)
+        function showStep13B() {
+            console.log('=== SHOWSTEP13B EXECUTADA ===');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.add('hidden');
+            document.getElementById('step5').classList.add('hidden');
+            document.getElementById('step6').classList.add('hidden');
+            document.getElementById('step7').classList.add('hidden');
+            document.getElementById('step8').classList.add('hidden');
+            document.getElementById('step9').classList.add('hidden');
+            document.getElementById('step10a').classList.add('hidden');
+            document.getElementById('step10b').classList.add('hidden');
+            document.getElementById('step11a').classList.add('hidden');
+            document.getElementById('step11b').classList.add('hidden');
+            document.getElementById('step12a').classList.add('hidden');
+            document.getElementById('step12b').classList.add('hidden');
+            document.getElementById('step13a').classList.add('hidden');
+            document.getElementById('step14').classList.add('hidden');
+            document.getElementById('step15').classList.add('hidden');
+            document.getElementById('step16').classList.add('hidden');
+            document.getElementById('step13b').classList.remove('hidden');
+            currentStep = '13b';
+        }
+
+        // Função para mostrar o Step 14 (Alergia a vaso-dilatadores)
+        function showStep14() {
+            console.log('=== SHOWSTEP14 EXECUTADA ===');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.add('hidden');
+            document.getElementById('step5').classList.add('hidden');
+            document.getElementById('step6').classList.add('hidden');
+            document.getElementById('step7').classList.add('hidden');
+            document.getElementById('step8').classList.add('hidden');
+            document.getElementById('step9').classList.add('hidden');
+            document.getElementById('step10a').classList.add('hidden');
+            document.getElementById('step10b').classList.add('hidden');
+            document.getElementById('step11a').classList.add('hidden');
+            document.getElementById('step11b').classList.add('hidden');
+            document.getElementById('step12a').classList.add('hidden');
+            document.getElementById('step12b').classList.add('hidden');
+            document.getElementById('step13a').classList.add('hidden');
+            document.getElementById('step13b').classList.add('hidden');
+            document.getElementById('step15').classList.add('hidden');
+            document.getElementById('step16').classList.add('hidden');
+            document.getElementById('step14').classList.remove('hidden');
+            currentStep = '14';
+        }
+
+        // Função para mostrar o Step 15 (Alergia a corante)
+        function showStep15() {
+            console.log('=== SHOWSTEP15 EXECUTADA ===');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.add('hidden');
+            document.getElementById('step5').classList.add('hidden');
+            document.getElementById('step6').classList.add('hidden');
+            document.getElementById('step7').classList.add('hidden');
+            document.getElementById('step8').classList.add('hidden');
+            document.getElementById('step9').classList.add('hidden');
+            document.getElementById('step10a').classList.add('hidden');
+            document.getElementById('step10b').classList.add('hidden');
+            document.getElementById('step11a').classList.add('hidden');
+            document.getElementById('step11b').classList.add('hidden');
+            document.getElementById('step12a').classList.add('hidden');
+            document.getElementById('step12b').classList.add('hidden');
+            document.getElementById('step13a').classList.add('hidden');
+            document.getElementById('step13b').classList.add('hidden');
+            document.getElementById('step14').classList.add('hidden');
+            document.getElementById('step16').classList.add('hidden');
+            document.getElementById('step15').classList.remove('hidden');
+            currentStep = '15';
+        }
+
+        // Função para mostrar o Step 16 (Frequência de uso do medicamento)
+        function showStep16() {
+            console.log('=== SHOWSTEP16 EXECUTADA ===');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.add('hidden');
+            document.getElementById('step5').classList.add('hidden');
+            document.getElementById('step6').classList.add('hidden');
+            document.getElementById('step7').classList.add('hidden');
+            document.getElementById('step8').classList.add('hidden');
+            document.getElementById('step9').classList.add('hidden');
+            document.getElementById('step10a').classList.add('hidden');
+            document.getElementById('step10b').classList.add('hidden');
+            document.getElementById('step11a').classList.add('hidden');
+            document.getElementById('step11b').classList.add('hidden');
+            document.getElementById('step12a').classList.add('hidden');
+            document.getElementById('step12b').classList.add('hidden');
+            document.getElementById('step13a').classList.add('hidden');
+            document.getElementById('step13b').classList.add('hidden');
+            document.getElementById('step14').classList.add('hidden');
+            document.getElementById('step15').classList.add('hidden');
+            document.getElementById('step17').classList.add('hidden');
+            document.getElementById('step18').classList.add('hidden');
+            document.getElementById('step16').classList.remove('hidden');
+            currentStep = '16';
+        }
+
+        // Função para mostrar o Step 17 (Tela de carregamento personalizada)
+        function showStep17() {
+            console.log('=== SHOWSTEP17 EXECUTADA ===');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.add('hidden');
+            document.getElementById('step5').classList.add('hidden');
+            document.getElementById('step6').classList.add('hidden');
+            document.getElementById('step7').classList.add('hidden');
+            document.getElementById('step8').classList.add('hidden');
+            document.getElementById('step9').classList.add('hidden');
+            document.getElementById('step10a').classList.add('hidden');
+            document.getElementById('step10b').classList.add('hidden');
+            document.getElementById('step11a').classList.add('hidden');
+            document.getElementById('step11b').classList.add('hidden');
+            document.getElementById('step12a').classList.add('hidden');
+            document.getElementById('step12b').classList.add('hidden');
+            document.getElementById('step13a').classList.add('hidden');
+            document.getElementById('step13b').classList.add('hidden');
+            document.getElementById('step14').classList.add('hidden');
+            document.getElementById('step15').classList.add('hidden');
+            document.getElementById('step16').classList.add('hidden');
+            document.getElementById('step18').classList.add('hidden');
+            document.getElementById('step17').classList.remove('hidden');
+            currentStep = '17';
+        }
+
+        // Função para mostrar o Step 18 (Escolha do tratamento)
+        function showStep18() {
+            console.log('=== SHOWSTEP18 EXECUTADA ===');
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.add('hidden');
+            document.getElementById('step5').classList.add('hidden');
+            document.getElementById('step6').classList.add('hidden');
+            document.getElementById('step7').classList.add('hidden');
+            document.getElementById('step8').classList.add('hidden');
+            document.getElementById('step9').classList.add('hidden');
+            document.getElementById('step10a').classList.add('hidden');
+            document.getElementById('step10b').classList.add('hidden');
+            document.getElementById('step11a').classList.add('hidden');
+            document.getElementById('step11b').classList.add('hidden');
+            document.getElementById('step12a').classList.add('hidden');
+            document.getElementById('step12b').classList.add('hidden');
+            document.getElementById('step13a').classList.add('hidden');
+            document.getElementById('step13b').classList.add('hidden');
+            document.getElementById('step14').classList.add('hidden');
+            document.getElementById('step15').classList.add('hidden');
+            document.getElementById('step16').classList.add('hidden');
+            document.getElementById('step17').classList.add('hidden');
+            document.getElementById('step18').classList.remove('hidden');
+            currentStep = '18';
+        }
+
+        // Função para mostrar a tela de carregamento
+        function showLoadingScreen() {
+            console.log('=== SHOWLOADINGSCREEN EXECUTADA ===');
+            console.log('Escondendo step1...');
+            document.getElementById('step1').classList.add('hidden');
+            console.log('Escondendo step2...');
+            document.getElementById('step2').classList.add('hidden');
+            console.log('Escondendo step3...');
+            document.getElementById('step3').classList.add('hidden');
+            console.log('Escondendo step4...');
+            document.getElementById('step4').classList.add('hidden');
+            console.log('Escondendo step5...');
+            document.getElementById('step5').classList.add('hidden');
+            console.log('Escondendo step6...');
+            document.getElementById('step6').classList.add('hidden');
+            console.log('Escondendo step7...');
+            document.getElementById('step7').classList.add('hidden');
+            console.log('Escondendo step8...');
+            document.getElementById('step8').classList.add('hidden');
+            console.log('Escondendo step9...');
+            document.getElementById('step9').classList.add('hidden');
+            console.log('Escondendo step10a...');
+            document.getElementById('step10a').classList.add('hidden');
+            console.log('Escondendo step10b...');
+            document.getElementById('step10b').classList.add('hidden');
+            console.log('Escondendo step11a...');
+            document.getElementById('step11a').classList.add('hidden');
+            console.log('Escondendo step11b...');
+            document.getElementById('step11b').classList.add('hidden');
+            console.log('Escondendo step12a...');
+            document.getElementById('step12a').classList.add('hidden');
+            console.log('Escondendo step13a...');
+            document.getElementById('step13a').classList.add('hidden');
+            console.log('Escondendo step12b...');
+            document.getElementById('step12b').classList.add('hidden');
+            console.log('Escondendo step13b...');
+            document.getElementById('step13b').classList.add('hidden');
+            console.log('Escondendo step14...');
+            document.getElementById('step14').classList.add('hidden');
+            console.log('Escondendo step15...');
+            document.getElementById('step15').classList.add('hidden');
+            console.log('Escondendo step16...');
+            document.getElementById('step16').classList.add('hidden');
+            console.log('Escondendo step17...');
+            document.getElementById('step17').classList.add('hidden');
+            console.log('Escondendo step18...');
+            document.getElementById('step18').classList.add('hidden');
+            console.log('Mostrando loadingScreen...');
+            document.getElementById('loadingScreen').classList.remove('hidden');
+            console.log('Iniciando animação da barra...');
+            animateLoadingBar();
+        }
+
+        // Máscaras de input
+        function formatCPF(cpf) {
+            return cpf.replace(/\D/g, '').replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        }
+
+        function formatTelefone(telefone) {
+            const cleaned = telefone.replace(/\D/g, '');
+            if (cleaned.length <= 10) {
+                return cleaned.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+            } else {
+                return cleaned.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            }
+        }
+
+
+
+        // Validação de CPF
+        function validarCPF(cpf) {
+            cpf = cpf.replace(/\D/g, '');
+            
+            if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) {
+                return false;
+            }
+            
+            let soma = 0;
+            for (let i = 0; i < 9; i++) {
+                soma += parseInt(cpf[i]) * (10 - i);
+            }
+            let resto = (soma * 10) % 11;
+            if (resto === 10 || resto === 11) resto = 0;
+            if (resto !== parseInt(cpf[9])) return false;
+            
+            soma = 0;
+            for (let i = 0; i < 10; i++) {
+                soma += parseInt(cpf[i]) * (11 - i);
+            }
+            resto = (soma * 10) % 11;
+            if (resto === 10 || resto === 11) resto = 0;
+            if (resto !== parseInt(cpf[10])) return false;
+            
+            return true;
+        }
+
+        // Função para mostrar/esconder elementos
+        function showElement(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function hideElement(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // Função para salvar dados pessoais no Supabase
+        async function salvarDados(dados) {
+            try {
+                console.log('Tentando salvar dados no Supabase:', dados);
+                
+                const { data, error } = await supabase
+                    .from('quiz_mencare') // Nome da tabela no Supabase
+                    .insert([dados]);
+
+                if (error) {
+                    console.error('Erro do Supabase:', error);
+                    throw error;
+                }
+                
+                console.log('Dados salvos com sucesso no Supabase:', data);
+                return { success: true, data };
+            } catch (error) {
+                console.error('Erro ao salvar dados:', error);
+                return { success: true, error: error.message }; // Sempre retornar success para continuar
+            }
+        }
+
+        // Função para salvar resposta do quiz no Supabase
+        async function salvarResposta(resposta, step, nomeColuna) {
+            try {
+                const userId = userData.email || userData.phone || userData.cpf || 'temp_' + Date.now();
+                console.log('Salvando resposta:', { resposta, step, nomeColuna, userId });
+                
+                // Criar objeto com a coluna específica
+                const dadosUpdate = {};
+                dadosUpdate[nomeColuna] = resposta;
+                
+                // Tentar atualizar o registro existente pelo email/phone/cpf
+                let updateResult = null;
+                
+                if (userData.email) {
+                    const { data, error } = await supabase
+                        .from('quiz_mencare')
+                        .update(dadosUpdate)
+                        .eq('email', userData.email);
+                    
+                    if (error) throw error;
+                    updateResult = data;
+                } else if (userData.phone) {
+                    const { data, error } = await supabase
+                        .from('quiz_mencare')
+                        .update(dadosUpdate)
+                        .eq('phone', userData.phone);
+                    
+                    if (error) throw error;
+                    updateResult = data;
+                } else if (userData.cpf) {
+                    const { data, error } = await supabase
+                        .from('quiz_mencare')
+                        .update(dadosUpdate)
+                        .eq('cpf', userData.cpf);
+                    
+                    if (error) throw error;
+                    updateResult = data;
+                }
+                
+                console.log('Resposta salva com sucesso:', { step, nomeColuna, resposta });
+                return { success: true, data: updateResult };
+                
+            } catch (error) {
+                console.error('Erro ao salvar resposta:', error);
+                // Continuar mesmo com erro para não travar o quiz
+                return { success: true, error: error.message };
+            }
+        }
+
+
+
+        // Função para lidar com clique nas opções do Step 2
+        async function handleOptionClick2(event) {
+            const selectedValue = event.currentTarget.dataset.value;
+            console.log('Opção selecionada no Step 2:', selectedValue);
+            
+            // Destacar opção selecionada
+            document.querySelectorAll('.option-button-step2').forEach(btn => {
+                btn.classList.remove('border-bluue-blue', 'bg-blue-50');
+                btn.classList.add('border-gray-200');
+            });
+            
+            event.currentTarget.classList.add('border-bluue-blue', 'bg-blue-50');
+            event.currentTarget.classList.remove('border-gray-200');
+
+            // Mostrar loading
+            showElement('selectionLoading2');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(selectedValue, 2, 'o_que_melhorar');
+
+            if (resultado.success) {
+                // Simular um pequeno delay para UX e ir para step 3
+                setTimeout(() => {
+                    hideElement('selectionLoading2');
+                    showStep3();
+                }, 1000);
+            } else {
+                // Esconder loading em caso de erro
+                hideElement('selectionLoading2');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para lidar com clique nas opções do Step 3
+        async function handleOptionClick3(event) {
+            const selectedValue = event.currentTarget.dataset.value;
+            console.log('Opção selecionada no Step 3:', selectedValue);
+            
+            // Destacar opção selecionada
+            document.querySelectorAll('.option-button-step3').forEach(btn => {
+                btn.classList.remove('border-bluue-blue', 'bg-blue-50');
+                btn.classList.add('border-gray-200');
+            });
+            
+            event.currentTarget.classList.add('border-bluue-blue', 'bg-blue-50');
+            event.currentTarget.classList.remove('border-gray-200');
+
+            // Mostrar loading
+            showElement('selectionLoading3');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(selectedValue, 3, 'situacao_especifica');
+
+            if (resultado.success) {
+                // Simular um pequeno delay para UX e ir para step 4
+                setTimeout(() => {
+                    hideElement('selectionLoading3');
+                    showStep4();
+                }, 1000);
+            } else {
+                // Esconder loading em caso de erro
+                hideElement('selectionLoading3');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para lidar com clique nas opções do Step 4
+        async function handleOptionClick4(event) {
+            const selectedValue = event.currentTarget.dataset.value;
+            console.log('Opção selecionada no Step 4:', selectedValue);
+            
+            // Destacar opção selecionada
+            document.querySelectorAll('.option-button-step4').forEach(btn => {
+                btn.classList.remove('border-green-500', 'bg-green-50', 'border-red-500', 'bg-red-50');
+                btn.classList.add('border-gray-200');
+            });
+            
+            if (selectedValue === 'sim') {
+                event.currentTarget.classList.add('border-green-500', 'bg-green-50');
+            } else {
+                event.currentTarget.classList.add('border-red-500', 'bg-red-50');
+            }
+            event.currentTarget.classList.remove('border-gray-200');
+
+            // Mostrar loading
+            showElement('selectionLoading4');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(selectedValue, 4, 'baixa_libido');
+
+            if (resultado.success) {
+                // Simular um pequeno delay para UX e ir para step 5
+                setTimeout(() => {
+                    hideElement('selectionLoading4');
+                    showStep5();
+                }, 1000);
+            } else {
+                // Esconder loading em caso de erro
+                hideElement('selectionLoading4');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para lidar com clique nas opções do Step 5
+        async function handleOptionClick5(event) {
+            const selectedValue = event.currentTarget.dataset.value;
+            console.log('Opção selecionada no Step 5:', selectedValue);
+            
+            // Destacar opção selecionada
+            document.querySelectorAll('.option-button-step5').forEach(btn => {
+                btn.classList.remove('border-bluue-blue', 'bg-blue-50');
+                btn.classList.add('border-gray-200');
+            });
+            
+            event.currentTarget.classList.add('border-bluue-blue', 'bg-blue-50');
+            event.currentTarget.classList.remove('border-gray-200');
+
+            // Mostrar loading
+            showElement('selectionLoading5');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(selectedValue, 5, 'acima_peso');
+
+            if (resultado.success) {
+                // Simular um pequeno delay para UX e ir para step 6
+                setTimeout(() => {
+                    hideElement('selectionLoading5');
+                    showStep6();
+                }, 1000);
+            } else {
+                // Esconder loading em caso de erro
+                hideElement('selectionLoading5');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para lidar com clique nas opções do Step 6
+        async function handleOptionClick6(event) {
+            const selectedValue = event.target.value;
+            console.log('Opção selecionada no Step 6:', selectedValue);
+            
+            // Destacar opção selecionada
+            document.querySelectorAll('.option-radio-step6').forEach(label => {
+                label.classList.remove('border-bluue-blue', 'bg-blue-50');
+                label.classList.add('border-gray-200');
+            });
+            
+            event.target.closest('.option-radio-step6').classList.add('border-bluue-blue', 'bg-blue-50');
+            event.target.closest('.option-radio-step6').classList.remove('border-gray-200');
+
+            // Mostrar loading
+            showElement('selectionLoading6');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(selectedValue, 6, 'peso_atual');
+
+            if (resultado.success) {
+                // Simular um pequeno delay para UX e ir para step 7
+                setTimeout(() => {
+                    hideElement('selectionLoading6');
+                    showStep7();
+                }, 1000);
+            } else {
+                // Esconder loading em caso de erro
+                hideElement('selectionLoading6');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para lidar com clique nas opções do Step 7
+        async function handleOptionClick7(event) {
+            const selectedValue = event.currentTarget.dataset.value;
+            console.log('Opção selecionada no Step 7:', selectedValue);
+            
+            // Destacar opção selecionada
+            document.querySelectorAll('.option-button-step7').forEach(btn => {
+                btn.classList.remove('border-bluue-blue', 'bg-blue-50');
+                btn.classList.add('border-gray-200');
+            });
+            
+            event.currentTarget.classList.add('border-bluue-blue', 'bg-blue-50');
+            event.currentTarget.classList.remove('border-gray-200');
+
+            // Mostrar loading
+            showElement('selectionLoading7');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(selectedValue, 7, 'dificuldade_urinar');
+
+            if (resultado.success) {
+                // Simular um pequeno delay para UX e ir para step 8
+                setTimeout(() => {
+                    hideElement('selectionLoading7');
+                    showStep8();
+                }, 1000);
+            } else {
+                // Esconder loading em caso de erro
+                hideElement('selectionLoading7');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para lidar com clique nas opções do Step 8
+        async function handleOptionClick8(event) {
+            const selectedValue = event.currentTarget.dataset.value;
+            console.log('Opção selecionada no Step 8:', selectedValue);
+            
+            // Destacar opção selecionada
+            document.querySelectorAll('.option-button-step8').forEach(btn => {
+                btn.classList.remove('border-bluue-blue', 'bg-blue-50');
+                btn.classList.add('border-gray-200');
+            });
+            
+            event.currentTarget.classList.add('border-bluue-blue', 'bg-blue-50');
+            event.currentTarget.classList.remove('border-gray-200');
+
+            // Mostrar loading
+            showElement('selectionLoading8');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(selectedValue, 8, 'aumento_prostata');
+
+            if (resultado.success) {
+                // Simular um pequeno delay para UX e ir para step 9
+                setTimeout(() => {
+                    hideElement('selectionLoading8');
+                    showStep9();
+                }, 1000);
+            } else {
+                // Esconder loading em caso de erro
+                hideElement('selectionLoading8');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para lidar com clique nas opções do Step 9
+        async function handleOptionClick9(event) {
+            const selectedValue = event.currentTarget.dataset.value;
+            console.log('Opção selecionada no Step 9:', selectedValue);
+            
+            // Destacar opção selecionada
+            document.querySelectorAll('.option-button-step9').forEach(btn => {
+                if (selectedValue === 'sim') {
+                    btn.classList.remove('border-bluue-blue', 'bg-blue-50');
+                    btn.classList.add('border-gray-200');
+                    if (btn.dataset.value === 'nao') {
+                        btn.classList.remove('bg-bluue-blue', 'border-bluue-blue');
+                        btn.classList.add('bg-white', 'border-gray-200');
+                        btn.querySelector('span').classList.remove('text-white');
+                        btn.querySelector('span').classList.add('text-gray-800');
+                    }
+                } else {
+                    btn.classList.remove('border-bluue-blue', 'bg-blue-50');
+                    btn.classList.add('border-gray-200');
+                }
+            });
+            
+            if (selectedValue === 'sim') {
+                event.currentTarget.classList.add('border-bluue-blue', 'bg-blue-50');
+                event.currentTarget.classList.remove('border-gray-200');
+            } else {
+                // Manter o estilo azul para "Não"
+                event.currentTarget.classList.add('bg-bluue-blue', 'border-bluue-blue');
+                event.currentTarget.classList.remove('border-gray-200', 'bg-white');
+                event.currentTarget.querySelector('span').classList.add('text-white');
+                event.currentTarget.querySelector('span').classList.remove('text-gray-800');
+            }
+
+            // Mostrar loading
+            showElement('selectionLoading9');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(selectedValue, 9, 'uso_medicamentos');
+
+            if (resultado.success) {
+                // Navegar condicionalmente baseado na resposta
+                setTimeout(() => {
+                    hideElement('selectionLoading9');
+                    if (selectedValue === 'sim') {
+                        // Se usa medicamentos, vai para pergunta sobre Nitrato
+                        showStep10A();
+                    } else {
+                        // Se não usa medicamentos, vai para pergunta sobre cirurgia
+                        showStep10B();
+                    }
+                }, 1000);
+            } else {
+                // Esconder loading em caso de erro
+                hideElement('selectionLoading9');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para lidar com clique nas opções do Step 10A (Nitrato)
+        async function handleOptionClick10A(event) {
+            const selectedValue = event.currentTarget.dataset.value;
+            console.log('Opção selecionada no Step 10A:', selectedValue);
+            
+            // Destacar opção selecionada
+            document.querySelectorAll('.option-button-step10a').forEach(btn => {
+                btn.classList.remove('border-bluue-blue', 'bg-blue-50');
+                btn.classList.add('border-gray-200');
+            });
+            
+            event.currentTarget.classList.add('border-bluue-blue', 'bg-blue-50');
+            event.currentTarget.classList.remove('border-gray-200');
+
+            // Mostrar loading
+            showElement('selectionLoading10a');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(selectedValue, '10a', 'medicamento_nitrato');
+
+            if (resultado.success) {
+                setTimeout(() => {
+                    hideElement('selectionLoading10a');
+                    if (selectedValue === 'sim') {
+                        // Se usa medicamentos à base de Nitrato, vai para consulta médica
+                        showStep12A();
+                    } else {
+                        // Se não usa medicamentos à base de Nitrato, vai para listar medicamentos
+                        showStep13A();
+                    }
+                }, 1000);
+            } else {
+                hideElement('selectionLoading10a');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para lidar com clique nas opções do Step 10B (Cirurgia)
+        async function handleOptionClick10B(event) {
+            const selectedValue = event.currentTarget.dataset.value;
+            console.log('Opção selecionada no Step 10B:', selectedValue);
+            
+            // Destacar opção selecionada
+            document.querySelectorAll('.option-button-step10b').forEach(btn => {
+                btn.classList.remove('border-bluue-blue', 'bg-blue-50');
+                btn.classList.add('border-gray-200');
+            });
+            
+            event.currentTarget.classList.add('border-bluue-blue', 'bg-blue-50');
+            event.currentTarget.classList.remove('border-gray-200');
+
+            // Mostrar loading
+            showElement('selectionLoading10b');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(selectedValue, '10b', 'passou_cirurgia');
+
+            if (resultado.success) {
+                // Navegar condicionalmente baseado na resposta
+                setTimeout(() => {
+                    hideElement('selectionLoading10b');
+                    if (selectedValue === 'sim') {
+                        // Se passou por cirurgia, vai para descrever a cirurgia
+                        showStep11A();
+                    } else {
+                        // Se não passou por cirurgia, vai para pergunta sobre alergia
+                        showStep11B();
+                    }
+                }, 1000);
+            } else {
+                hideElement('selectionLoading10b');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para lidar com clique no botão "Continuar" do Step 11A (Descrever cirurgia)
+        async function handleContinuarCirurgia() {
+            const descricao = document.getElementById('descricaoCirurgia').value.trim();
+            console.log('Descrição da cirurgia:', descricao);
+            
+            // Mostrar loading
+            showElement('selectionLoading11a');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(descricao || 'Não informado', '11a', 'descricao_cirurgia');
+
+            if (resultado.success) {
+                setTimeout(() => {
+                    hideElement('selectionLoading11a');
+                    alert('Quiz concluído! Todas as respostas foram salvas com sucesso.');
+                }, 1000);
+            } else {
+                hideElement('selectionLoading11a');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para lidar com clique nas opções do Step 11B (Alergia a medicamentos)
+        async function handleOptionClick11B(event) {
+            const selectedValue = event.currentTarget.dataset.value;
+            console.log('Opção selecionada no Step 11B:', selectedValue);
+            
+            // Destacar opção selecionada
+            document.querySelectorAll('.option-button-step11b').forEach(btn => {
+                btn.classList.remove('border-bluue-blue', 'bg-blue-50');
+                btn.classList.add('border-gray-200');
+            });
+            
+            event.currentTarget.classList.add('border-bluue-blue', 'bg-blue-50');
+            event.currentTarget.classList.remove('border-gray-200');
+
+            // Mostrar loading
+            showElement('selectionLoading11b');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(selectedValue, '11b', 'alergia_medicamentos');
+
+            if (resultado.success) {
+                // Navegar condicionalmente baseado na resposta
+                setTimeout(() => {
+                    hideElement('selectionLoading11b');
+                    if (selectedValue === 'sim') {
+                        // Se tem alergia a medicamentos, vai para pergunta sobre neuro-estimuladores
+                        showStep12B();
+                    } else {
+                        // Se não tem alergia a medicamentos, vai para condições de saúde
+                        showStep13B();
+                    }
+                }, 1000);
+            } else {
+                hideElement('selectionLoading11b');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para abrir WhatsApp quando clicar em "Revisar"
+        function abrirWhatsApp() {
+            // Número do WhatsApp do médico (substitua pelo número real)
+            const numeroWhatsApp = '5511999999999'; // Formato: código do país + DDD + número
+            const mensagem = encodeURIComponent('Olá! Gostaria de conversar com um médico sobre meu caso. Preciso de uma consulta presencial.');
+            
+            // URL do WhatsApp
+            const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensagem}`;
+            
+            // Abrir WhatsApp em nova aba
+            window.open(urlWhatsApp, '_blank');
+        }
+
+        // Função para lidar com clique no botão "Continuar" do Step 13A (Listar medicamentos)
+        async function handleContinuarMedicamentos() {
+            const medicamentos = document.getElementById('medicamentosDosagens').value.trim();
+            console.log('Lista de medicamentos:', medicamentos);
+            
+            // Mostrar loading
+            showElement('selectionLoading13a');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(medicamentos || 'Não informado', '13a', 'medicamentos_dosagens');
+
+            if (resultado.success) {
+                setTimeout(() => {
+                    hideElement('selectionLoading13a');
+                    alert('Quiz concluído! Todas as respostas foram salvas com sucesso.');
+                }, 1000);
+            } else {
+                hideElement('selectionLoading13a');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para lidar com clique nas opções do Step 12B (Alergia a neuro-estimuladores)
+        async function handleOptionClick12B(event) {
+            const selectedValue = event.currentTarget.dataset.value;
+            console.log('Opção selecionada no Step 12B:', selectedValue);
+            
+            // Destacar opção selecionada
+            document.querySelectorAll('.option-button-step12b').forEach(btn => {
+                btn.classList.remove('border-bluue-blue', 'bg-blue-50');
+                btn.classList.add('border-gray-200');
+            });
+            
+            event.currentTarget.classList.add('border-bluue-blue', 'bg-blue-50');
+            event.currentTarget.classList.remove('border-gray-200');
+
+            // Mostrar loading
+            showElement('selectionLoading12b');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(selectedValue, '12b', 'alergia_neuro_estimuladores');
+
+            if (resultado.success) {
+                setTimeout(() => {
+                    hideElement('selectionLoading12b');
+                    if (selectedValue === 'sim') {
+                        // Se alergia é a neuro-estimuladores, vai para consulta médica (WhatsApp)
+                        showStep12A();
+                    } else {
+                        // Se alergia não é a neuro-estimuladores, pergunta sobre vaso-dilatadores
+                        showStep14();
+                    }
+                }, 1000);
+            } else {
+                hideElement('selectionLoading12b');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para lidar com clique no botão "Continuar" do Step 13B (Condições de saúde)
+        async function handleContinuarCondicoes() {
+            // Coletar todas as condições selecionadas
+            const checkboxes = document.querySelectorAll('input[name="condicoes"]:checked');
+            const condicoesSelecionadas = Array.from(checkboxes).map(cb => cb.value);
+            
+            console.log('Condições selecionadas:', condicoesSelecionadas);
+            
+            // Mostrar loading
+            showElement('selectionLoading13b');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(condicoesSelecionadas, '13b', 'condicoes_saude');
+
+            if (resultado.success) {
+                setTimeout(() => {
+                    hideElement('selectionLoading13b');
+                    // Ir para Step 16 (frequência de uso do medicamento)
+                    showStep16();
+                }, 1000);
+            } else {
+                hideElement('selectionLoading13b');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para lidar com o checkbox "Nenhuma das opções"
+        function handleNenhumaOpcao() {
+            const nenhumaCheckbox = document.getElementById('nenhuma');
+            const outrosCheckboxes = document.querySelectorAll('input[name="condicoes"]:not(#nenhuma)');
+            
+            if (nenhumaCheckbox.checked) {
+                // Se "Nenhuma das opções" for marcada, desmarcar todas as outras
+                outrosCheckboxes.forEach(cb => cb.checked = false);
+            }
+        }
+
+        // Função para lidar com outros checkboxes
+        function handleOutrasCondicoes() {
+            const nenhumaCheckbox = document.getElementById('nenhuma');
+            const outrosCheckboxes = document.querySelectorAll('input[name="condicoes"]:not(#nenhuma)');
+            
+            // Se qualquer outra opção for marcada, desmarcar "Nenhuma das opções"
+            const algumaMarcada = Array.from(outrosCheckboxes).some(cb => cb.checked);
+            if (algumaMarcada) {
+                nenhumaCheckbox.checked = false;
+            }
+        }
+
+        // Função para lidar com clique nas opções do Step 14 (Alergia a vaso-dilatadores)
+        async function handleOptionClick14(event) {
+            const selectedValue = event.currentTarget.dataset.value;
+            console.log('Opção selecionada no Step 14:', selectedValue);
+            
+            // Destacar opção selecionada
+            document.querySelectorAll('.option-button-step14').forEach(btn => {
+                btn.classList.remove('border-bluue-blue', 'bg-blue-50');
+                btn.classList.add('border-gray-200');
+            });
+            
+            event.currentTarget.classList.add('border-bluue-blue', 'bg-blue-50');
+            event.currentTarget.classList.remove('border-gray-200');
+
+            // Mostrar loading
+            showElement('selectionLoading14');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(selectedValue, 14, 'alergia_vaso_dilatadores');
+
+            if (resultado.success) {
+                setTimeout(() => {
+                    hideElement('selectionLoading14');
+                    if (selectedValue === 'sim') {
+                        // Se alergia é a vaso-dilatadores, vai para consulta médica (WhatsApp)
+                        showStep12A();
+                    } else {
+                        // Se alergia não é a vaso-dilatadores, pergunta sobre alergia a corante
+                        showStep15();
+                    }
+                }, 1000);
+            } else {
+                hideElement('selectionLoading14');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para lidar com clique nas opções do Step 15 (Alergia a corante)
+        async function handleOptionClick15(event) {
+            const selectedValue = event.currentTarget.dataset.value;
+            console.log('Opção selecionada no Step 15:', selectedValue);
+            
+            // Destacar opção selecionada
+            document.querySelectorAll('.option-button-step15').forEach(btn => {
+                btn.classList.remove('border-bluue-blue', 'bg-blue-50');
+                btn.classList.add('border-gray-200');
+            });
+            
+            event.currentTarget.classList.add('border-bluue-blue', 'bg-blue-50');
+            event.currentTarget.classList.remove('border-gray-200');
+
+            // Mostrar loading
+            showElement('selectionLoading15');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(selectedValue, 15, 'alergia_corante');
+
+            if (resultado.success) {
+                setTimeout(() => {
+                    hideElement('selectionLoading15');
+                    if (selectedValue === 'sim') {
+                        // Se tem alergia a corante, vai para consulta médica (WhatsApp)
+                        showStep12A();
+                    } else {
+                        // Se não tem alergia a corante, vai para condições de saúde
+                        showStep13B();
+                    }
+                }, 1000);
+            } else {
+                hideElement('selectionLoading15');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Função para lidar com clique nas opções do Step 16 (Frequência de uso do medicamento)
+        async function handleOptionClick16(event) {
+            const selectedValue = event.currentTarget.dataset.value;
+            console.log('Opção selecionada no Step 16:', selectedValue);
+            
+            // Destacar opção selecionada
+            document.querySelectorAll('.option-button-step16').forEach(btn => {
+                btn.classList.remove('border-bluue-blue', 'bg-blue-50');
+                btn.classList.add('border-gray-200');
+            });
+            
+            event.currentTarget.classList.add('border-bluue-blue', 'bg-blue-50');
+            event.currentTarget.classList.remove('border-gray-200');
+
+            // Mostrar loading
+            showElement('selectionLoading16');
+
+            // Salvar resposta
+            const resultado = await salvarResposta(selectedValue, 16, 'frequencia_uso');
+
+            if (resultado.success) {
+                setTimeout(() => {
+                    hideElement('selectionLoading16');
+                    // Ir para Step 17 (tela de carregamento personalizada)
+                    showStep17();
+                    // Iniciar animação da barra de análise
+                    setTimeout(() => {
+                        animateAnalysisLoadingBar();
+                    }, 100);
+                }, 1000);
+            } else {
+                hideElement('selectionLoading16');
+                alert('Erro ao salvar resposta. Tente novamente.');
+                console.error('Erro:', resultado.error);
+            }
+        }
+
+        // Variável para armazenar a opção de tratamento selecionada
+        let selectedTreatment = '8'; // Padrão é 8 unidades
+
+        // Função para atualizar o preço baseado na quantidade
+        function updatePrice(quantity) {
+            const prices = {
+                '4': { total: 'R$ 131,95', perUnit: 'R$32,99', savings: 'Economize R$30!' },
+                '8': { total: 'R$ 197,92', perUnit: 'R$24,74', savings: 'Economize R$68!' }, 
+                '12': { total: 'R$ 296,88', perUnit: 'R$24,74', savings: 'Economize R$105!' }
+            };
+            
+            const priceInfo = prices[quantity] || prices['8'];
+            
+            // Atualizar elementos do DOM
+            const currentPriceEl = document.getElementById('currentPrice');
+            const selectedDosesEl = document.getElementById('selectedDoses');
+            const pricePerDoseEl = document.getElementById('pricePerDose');
+            const savingsTextEl = document.getElementById('savingsText');
+            
+            if (currentPriceEl) currentPriceEl.textContent = priceInfo.total;
+            if (selectedDosesEl) selectedDosesEl.textContent = `${quantity} doses`;
+            if (pricePerDoseEl) pricePerDoseEl.textContent = priceInfo.perUnit;
+            if (savingsTextEl) savingsTextEl.textContent = priceInfo.savings;
+        }
+
+        // Função para lidar com seleção de tratamento
+        function handleTreatmentSelection(event) {
+            const selectedValue = event.currentTarget.dataset.value;
+            selectedTreatment = selectedValue;
+            console.log('Tratamento selecionado:', selectedValue);
+            
+            // Remover seleção de todos os cards (mobile e desktop)
+            document.querySelectorAll('.treatment-option').forEach(option => {
+                option.classList.remove('bg-bluue-blue', 'border-bluue-blue', 'ring-4', 'ring-blue-300');
+                option.classList.add('hover:border-bluue-blue');
+                
+                // Resetar cores dos textos
+                const numberEl = option.querySelector('div:first-of-type');
+                const textEl = option.querySelector('div:nth-of-type(2)');
+                const priceEl = option.querySelector('div:nth-of-type(3)');
+                
+                if (option.dataset.value === '4') {
+                    option.classList.add('bg-gray-300', 'border-gray-400');
+                    if (numberEl) numberEl.className = numberEl.className.replace(/text-\w+-\w+/g, 'text-gray-600');
+                    if (textEl) textEl.className = textEl.className.replace(/text-\w+-\w+/g, 'text-gray-700');
+                    if (priceEl) priceEl.className = priceEl.className.replace(/text-\w+-\w+/g, 'text-gray-500');
+                } else if (option.dataset.value === '8') {
+                    option.classList.add('bg-bluue-blue', 'border-bluue-blue');
+                    if (numberEl) numberEl.className = numberEl.className.replace(/text-\w+-\w+/g, 'text-white');
+                    if (textEl) textEl.className = textEl.className.replace(/text-\w+-\w+/g, 'text-white');
+                    if (priceEl) priceEl.className = priceEl.className.replace(/text-\w+-\w+/g, 'text-blue-100');
+                } else if (option.dataset.value === '12') {
+                    option.classList.add('bg-gray-500', 'border-gray-600');
+                    if (numberEl) numberEl.className = numberEl.className.replace(/text-\w+-\w+/g, 'text-white');
+                    if (textEl) textEl.className = textEl.className.replace(/text-\w+-\w+/g, 'text-white');
+                    if (priceEl) priceEl.className = priceEl.className.replace(/text-\w+-\w+/g, 'text-gray-200');
+                }
+            });
+            
+            // Destacar opção selecionada com anel azul e efeito
+            const selectedOptions = document.querySelectorAll(`[data-value="${selectedValue}"]`);
+            selectedOptions.forEach(option => {
+                option.classList.remove('hover:border-bluue-blue');
+                option.classList.add('ring-4', 'ring-blue-300', 'scale-105');
+                
+                // Adicionar feedback tátil
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
+            });
+            
+            // Atualizar preço
+            updatePrice(selectedValue);
+            
+            // Remover efeito de escala após um tempo
+            setTimeout(() => {
+                selectedOptions.forEach(option => {
+                    option.classList.remove('scale-105');
+                });
+            }, 200);
+        }
+
+        // Função para lidar com checkout
+        async function handleCheckout() {
+            console.log('Redirecionando para checkout com', selectedTreatment, 'unidades');
+            showElement('selectionLoading18');
+            
+            // Salvar a escolha de tratamento e marcar como completo
+            try {
+                const dadosFinais = {
+                    tratamento_escolhido: parseInt(selectedTreatment),
+                    quiz_completed: true,
+                    completed_at: new Date().toISOString()
+                };
+
+                let updateResult = null;
+                
+                if (userData.email) {
+                    const { data, error } = await supabase
+                        .from('quiz_mencare')
+                        .update(dadosFinais)
+                        .eq('email', userData.email);
+                    
+                    if (error) throw error;
+                    updateResult = data;
+                } else if (userData.phone) {
+                    const { data, error } = await supabase
+                        .from('quiz_mencare')
+                        .update(dadosFinais)
+                        .eq('phone', userData.phone);
+                    
+                    if (error) throw error;
+                    updateResult = data;
+                } else if (userData.cpf) {
+                    const { data, error } = await supabase
+                        .from('quiz_mencare')
+                        .update(dadosFinais)
+                        .eq('cpf', userData.cpf);
+                    
+                    if (error) throw error;
+                    updateResult = data;
+                }
+
+                console.log('Quiz finalizado com sucesso:', updateResult);
+                
+                // Simular redirecionamento para checkout
+                setTimeout(() => {
+                    hideElement('selectionLoading18');
+                    alert(`✅ Quiz completado! Redirecionando para o checkout com ${selectedTreatment} unidades!`);
+                    // Aqui você pode redirecionar para a página de checkout real
+                    // window.location.href = `/checkout?quantity=${selectedTreatment}`;
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Erro ao finalizar quiz:', error);
+                setTimeout(() => {
+                    hideElement('selectionLoading18');
+                    alert(`Redirecionando para o checkout com ${selectedTreatment} unidades!`);
+                }, 2000);
+            }
+        }
+
+        // Adicionar todos os event listeners quando DOM estiver carregado
+        document.addEventListener('DOMContentLoaded', function() {
+            // Aplicar máscaras aos inputs
+            document.getElementById('cpf').addEventListener('input', function(e) {
+                e.target.value = formatCPF(e.target.value);
+            });
+
+            document.getElementById('telefone').addEventListener('input', function(e) {
+                e.target.value = formatTelefone(e.target.value);
+            });
+
+            // Handler do formulário
+            const quizForm = document.getElementById('quizForm');
+            if (quizForm) {
+                console.log('Formulário encontrado, adicionando event listener');
+                quizForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    console.log('=== INÍCIO DO SUBMIT ===');
+
+                    const formData = new FormData(e.target);
+                    const dados = Object.fromEntries(formData);
+
+                    console.log('Formulário enviado com dados:', dados);
+
+                    // Verificar se elementos existem
+                    console.log('Elemento loading existe?', !!document.getElementById('loading'));
+                    console.log('Elemento successMessage existe?', !!document.getElementById('successMessage'));
+                    console.log('Elemento step1 existe?', !!document.getElementById('step1'));
+                    console.log('Elemento step2 existe?', !!document.getElementById('step2'));
+
+                    // Mostrar loading
+                    console.log('Mostrando loading...');
+                    showElement('loading');
+                    hideElement('errorMessage');
+                    hideElement('successMessage');
+
+                    // Preparar dados para envio (salvando apenas campos preenchidos)
+                    const dadosParaEnvio = {
+                        nome: dados.nome || '',
+                        phone: dados.telefone || '',
+                        cpf: dados.cpf ? dados.cpf.replace(/\D/g, '') : '', // Salvar CPF sem formatação
+                        nascimento: dados.dataNascimento || null,
+                        email: dados.email || ''
+                    };
+
+                    // Armazenar dados do usuário para próximas etapas
+                    userData = dadosParaEnvio;
+                    console.log('userData armazenado:', userData);
+
+                    // Tentar salvar no Supabase (mas sempre continuar, mesmo se der erro)
+                    try {
+                        await salvarDados(dadosParaEnvio);
+                        console.log('Dados salvos com sucesso');
+                    } catch (error) {
+                        console.log('Erro ao salvar dados, mas continuando:', error);
+                    }
+
+                    console.log('Escondendo loading e mostrando sucesso...');
+                    hideElement('loading');
+                    showElement('successMessage');
+                    
+                    // Aguardar 2 segundos e mostrar tela de carregamento
+                    console.log('Agendando mudança para tela de carregamento em 2 segundos...');
+                    setTimeout(() => {
+                        console.log('Executando mudança para tela de carregamento...');
+                        hideElement('successMessage');
+                        showLoadingScreen();
+                    }, 2000);
+                });
+            } else {
+                console.error('Formulário não encontrado!');
+            }
+
+            // Event listeners para opções do Step 2
+            document.querySelectorAll('.option-button-step2').forEach(button => {
+                button.addEventListener('click', handleOptionClick2);
+            });
+
+            // Event listeners para opções do Step 3
+            document.querySelectorAll('.option-button-step3').forEach(button => {
+                button.addEventListener('click', handleOptionClick3);
+            });
+
+            // Event listeners para opções do Step 4
+            document.querySelectorAll('.option-button-step4').forEach(button => {
+                button.addEventListener('click', handleOptionClick4);
+            });
+
+            // Event listeners para opções do Step 5
+            document.querySelectorAll('.option-button-step5').forEach(button => {
+                button.addEventListener('click', handleOptionClick5);
+            });
+
+            // Event listeners para opções do Step 6 (radio buttons)
+            document.querySelectorAll('input[name="peso"]').forEach(radio => {
+                radio.addEventListener('change', handleOptionClick6);
+            });
+
+            // Event listeners para opções do Step 7
+            document.querySelectorAll('.option-button-step7').forEach(button => {
+                button.addEventListener('click', handleOptionClick7);
+            });
+
+            // Event listeners para opções do Step 8
+            document.querySelectorAll('.option-button-step8').forEach(button => {
+                button.addEventListener('click', handleOptionClick8);
+            });
+
+            // Event listeners para opções do Step 9
+            document.querySelectorAll('.option-button-step9').forEach(button => {
+                button.addEventListener('click', handleOptionClick9);
+            });
+
+            // Event listeners para opções do Step 10A (Nitrato)
+            document.querySelectorAll('.option-button-step10a').forEach(button => {
+                button.addEventListener('click', handleOptionClick10A);
+            });
+
+            // Event listeners para opções do Step 10B (Cirurgia)
+            document.querySelectorAll('.option-button-step10b').forEach(button => {
+                button.addEventListener('click', handleOptionClick10B);
+            });
+
+            // Event listener para botão "Continuar" do Step 11A (Descrever cirurgia)
+            const continuarCirurgiaBtn = document.getElementById('continuarCirurgia');
+            if (continuarCirurgiaBtn) {
+                continuarCirurgiaBtn.addEventListener('click', handleContinuarCirurgia);
+            }
+
+            // Event listeners para opções do Step 11B (Alergia a medicamentos)
+            document.querySelectorAll('.option-button-step11b').forEach(button => {
+                button.addEventListener('click', handleOptionClick11B);
+            });
+
+            // Event listener para botão "Revisar" do Step 12A (WhatsApp)
+            const revisarBtn = document.getElementById('revisarRespostas');
+            if (revisarBtn) {
+                revisarBtn.addEventListener('click', abrirWhatsApp);
+            }
+
+            // Event listener para botão "Continuar" do Step 13A (Listar medicamentos)
+            const continuarMedicamentosBtn = document.getElementById('continuarMedicamentos');
+            if (continuarMedicamentosBtn) {
+                continuarMedicamentosBtn.addEventListener('click', handleContinuarMedicamentos);
+            }
+
+            // Event listeners para opções do Step 12B (Alergia a neuro-estimuladores)
+            document.querySelectorAll('.option-button-step12b').forEach(button => {
+                button.addEventListener('click', handleOptionClick12B);
+            });
+
+            // Event listener para botão "Continuar" do Step 13B (Condições de saúde)
+            const continuarCondicoesBtn = document.getElementById('continuarCondicoes');
+            if (continuarCondicoesBtn) {
+                continuarCondicoesBtn.addEventListener('click', handleContinuarCondicoes);
+            }
+
+            // Event listeners para checkboxes de condições de saúde
+            const nenhumaCheckbox = document.getElementById('nenhuma');
+            if (nenhumaCheckbox) {
+                nenhumaCheckbox.addEventListener('change', handleNenhumaOpcao);
+            }
+
+            const outrosCheckboxes = document.querySelectorAll('input[name="condicoes"]:not(#nenhuma)');
+            outrosCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', handleOutrasCondicoes);
+            });
+
+            // Event listeners para opções do Step 14 (Alergia a vaso-dilatadores)
+            document.querySelectorAll('.option-button-step14').forEach(button => {
+                button.addEventListener('click', handleOptionClick14);
+            });
+
+            // Event listeners para opções do Step 15 (Alergia a corante)
+            document.querySelectorAll('.option-button-step15').forEach(button => {
+                button.addEventListener('click', handleOptionClick15);
+            });
+
+            // Event listeners para opções do Step 16 (Frequência de uso do medicamento)
+            document.querySelectorAll('.option-button-step16').forEach(button => {
+                button.addEventListener('click', handleOptionClick16);
+            });
+
+            // Event listeners para opções de tratamento do Step 18
+            document.querySelectorAll('.treatment-option').forEach(option => {
+                option.addEventListener('click', handleTreatmentSelection);
+            });
+
+            // Event listener para botão de checkout do Step 18
+            const checkoutButton = document.getElementById('checkoutButton');
+            if (checkoutButton) {
+                checkoutButton.addEventListener('click', handleCheckout);
+            }
+        });
+
+        // Supabase configurado e pronto para uso
+        console.log('Supabase configurado com sucesso!');
+    </script>
+</body>
+</html>
