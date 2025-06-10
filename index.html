@@ -1579,8 +1579,8 @@
      <script>
         // Configuração do Supabase
         const SUPABASE_URL = 'https://ngdzdbqubwivbqckqkqd.supabase.co';
-        const SUPABASE_ANON_KEY = 'SUA_CHAVE_ANON_AQUI'; // IMPORTANTE: Troque pela sua chave anon do Supabase (não service_role)
-        const MODO_DEMO = false; // Mude para false quando configurar o Supabase
+        const SUPABASE_ANON_KEY = '__SUPABASE_ANON_KEY__'; // A chave será inserida aqui pelo GitHub Actions
+        const MODO_DEMO = false; // Garante que o modo de produção está ativo
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
